@@ -1,0 +1,53 @@
+﻿<Window x:Class="LibraryApp.StartUpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LibraryApp"
+        mc:Ignorable="d"
+        Title="LibraryApp" Height="720" Width="1280" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Grid>
+        <Image Height="auto" Width="auto" Stretch="Fill" Source="/win/StartUp/bookcases_bg_darker.jpg"/>
+
+        <Image x:Name="gear_button" VerticalAlignment="Top" HorizontalAlignment="Right" Source="/win/StartUp/gear.png" Height="80" MouseLeftButtonUp="Grid_MouseLeftButtonUp"/>
+        <Rectangle x:Name="settings_BG" Height="100" StrokeThickness="7" Width="300" RadiusX="2" RadiusY="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15,90" Visibility="Collapsed">
+            <Rectangle.Stroke>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                    <GradientStop Color="White"/>
+                    <GradientStop Color="#FFADADAD" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Stroke>
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                    <GradientStop Color="White"/>
+                    <GradientStop Color="#FFADADAD" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle Height="300" StrokeThickness="7" Width="300" RadiusX="5" RadiusY="5">
+            <Rectangle.Stroke>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                    <GradientStop Color="#FFADADAD"/>
+                    <GradientStop Color="White"  Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Stroke>
+            <Rectangle.Fill>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                    <GradientStop Color="#FFADADAD"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Логин" FontSize="20" FontWeight="ExtraBold" FontFamily="Arial"/>
+            <TextBox  Width="250" Height="50" Margin="0,0,0,10" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="24" VerticalContentAlignment="Center" />
+            <Label Content="Пароль" FontSize="20" FontWeight="ExtraBold" FontFamily="Arial"/>
+            <PasswordBox Width="250" Height="50" Margin="0,0,0,10" BorderBrush="Black" FontSize="24" VerticalContentAlignment="Center"/>
+
+            <CheckBox VerticalAlignment="Center" HorizontalAlignment="Left" Content="Запомнить логин" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" FontFamily="Arial"/>
+            <Button Content="ВХОД" Height="50" FontSize="20" FontWeight="SemiBold" Click="Button_Click" FontFamily="Arial"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
