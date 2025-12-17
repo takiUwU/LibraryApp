@@ -1,19 +1,37 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-internal class LibraryContext : DbContext
+public class LibraryContext : DbContext
 {
-    DbSet<Author> Authors { get; set; }
-    DbSet<Book> Books { get; set; }
-    DbSet<BookAmount> BookAmounts { get; set; }
-    DbSet<BookBorrow> BookBorrows { get; set; }
-    DbSet<Reader> Readers { get; set; }
-    DbSet<User> Users { get; set; }
+    public DbSet<Author> Authors { get; set; }
+    public DbSet<Book> Books { get; set; }
+    public DbSet<BookAmount> BookAmounts { get; set; }
+    public DbSet<Loan> Loans { get; set; }
+    public DbSet<Reader> Readers { get; set; }
+    public DbSet<User> Users { get; set; }
 
-    private string ServerName = @"26.203.160.220\SQLEXPRESS,1433"; // Пока-что использую просто сервер своего ноутбука. Потом буду делать что-нибудь другое.
+    public string ServerName = "";
+    public string ServerUserName = "";
+    public string ServerPassword = "";
+
+    public LibraryContext(string serverName, string Username, string Password)
+    {
+        ServerName = serverName;
+        ServerUserName = Username;
+        ServerPassword = Password;
+    }
+
+    public LibraryContext(string serverName) 
+    {
+        ServerName = serverName;
+    }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", ServerName));
+        if (string.IsNullOrEmpty(ServerUserName))
+            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", ServerName));
+        else
+            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;TrustServerCertificate=true;User Id={1};Password={2};", ServerName, ServerUserName, ServerPassword));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,19 +48,42 @@ internal class LibraryContext : DbContext
             .HasForeignKey<BookAmount>(a => a.BookID)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<BookBorrow>()
+        modelBuilder.Entity<Loan>()
             .HasOne(b => b.Reader)
-            .WithMany(r => r.Borrows)
+            .WithMany(r => r.Loans)
             .HasForeignKey(b => b.ReaderID)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<BookBorrow>()
+        modelBuilder.Entity<Loan>()
             .HasOne(b => b.Book)
-            .WithMany(b => b.Borrows)
+            .WithMany(b => b.Loans)
             .HasForeignKey(b => b.BookID)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<BookAmount>().HasKey(ba => ba.BookID);
+    }
+    
+    public void RegisterNewUser(User new_user)
+    {
+        Users.Add(new_user);
+    }
+
+    public ICollection<Loan> GetLoansByReaderId(int id)
+    {
+        Reader currentReader = Readers.FirstOrDefault(u => u.ID == id);
+        if (currentReader == null)
+            return new List<Loan>();
+        return currentReader.Loans;
+    }
+
+
+
+    public User GetUserByLogin(string login)
+    {
+        User user = Users.FirstOrDefault(u => u.Login == login);
+        if (user == null)
+            throw new Exception("Пользователь не найден!");
+        return user;
     }
 }
 

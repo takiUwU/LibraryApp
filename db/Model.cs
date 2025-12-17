@@ -18,7 +18,7 @@ public class Book
     public string ImagePath { get; set; } = null!;
     public Author Author { get; set; } = null!;
     public BookAmount? Amount { get; set; }
-    public ICollection<BookBorrow> Borrows { get; set; } = new List<BookBorrow>();
+    public ICollection<Loan> Loans { get; set; } = new List<Loan>();
 }
 
 
@@ -30,7 +30,7 @@ public class BookAmount
 }
 
 
-public class BookBorrow
+public class Loan
 {
     public int ID { get; set; }
     public int ReaderID { get; set; }
@@ -48,7 +48,8 @@ public class Reader
     public int ID { get; set; }
     public string Name { get; set; } = null!;
     public string Phone { get; set; } = null!;
-    public ICollection<BookBorrow> Borrows { get; set; } = new List<BookBorrow>();
+    public ICollection<Loan> Loans { get; set; } = new List<Loan>();
+    public User User { get; set; } = null!;
 }
 
 public class User
@@ -56,7 +57,7 @@ public class User
     public int ID { get; set; }
     public string UserType {  get; set; } = null!;
     public string Login { get; set; } = null!;
-    public string Password_Hash { get; set; } = null!;
-    public string Password_Salt { get; set; } = null!;
-    // Можно было бы добавить и другие поля, но я считаю это не обязательно для задания.
+    public string Password { get; set; } = null!;
+    public int? ReaderID { get; set; }
+    public Reader? Reader { get; set; } = null!;
 }
