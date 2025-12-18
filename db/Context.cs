@@ -29,9 +29,9 @@ public class LibraryContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (string.IsNullOrEmpty(ServerUserName))
-            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", ServerName));
+            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", ServerName), sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);});
         else
-            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;TrustServerCertificate=true;User Id={1};Password={2};", ServerName, ServerUserName, ServerPassword));
+            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;TrustServerCertificate=true;User Id={1};Password={2};", ServerName, ServerUserName, ServerPassword), sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); });
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

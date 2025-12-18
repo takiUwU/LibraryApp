@@ -1,0 +1,22 @@
+﻿<Page x:Class="LibraryApp.win.user_page.UserPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:LibraryApp.win.user_page"
+      mc:Ignorable="d" 
+      d:DesignHeight="720" d:DesignWidth="1280"
+      Title="UserPage">
+
+    <Grid>
+        <Image Height="auto" Width="auto" Stretch="UniformToFill" Source="/win/user_page/bookcases_bg.jpg"/>
+
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="500" Width="900" Margin="15">
+            <Label Content="Взятые книги" FontSize="35" FontWeight="ExtraBold" FontFamily="Arial" Foreground="#FF1B1B1B" />
+            <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" VerticalAlignment="Bottom" Height="460" Width="900" Background="#CCF0F0F0"/>
+        </StackPanel>
+        
+
+
+    </Grid>
+</Page>

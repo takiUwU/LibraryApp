@@ -60,7 +60,7 @@ namespace LibraryApp
                 return (false, "Логин или пароль введены неправильно.");
             if (!CheckPasswordHash(password, user.Password))
                 return (false, "Логин или пароль введены неправильно.");
-            return (true, "");
+            return (true, user.UserType);
 
 
         }

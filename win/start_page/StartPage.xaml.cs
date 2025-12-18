@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,17 +16,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LibraryApp
+namespace LibraryApp.win.start_page
 {
-    public partial class StartUpWindow : Window
+    public partial class StartPage : Page
     {
         //  26.203.160.220\SQLEXPRESS,1433   taki     4444
-        LibraryCore Core = null;
-        public StartUpWindow()
+        LibraryCore? Core = null;
+        public StartPage()
         {
             InitializeComponent();
             LoadStartUpData();
-            Core = new LibraryCore(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
         }
 
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -35,9 +34,10 @@ namespace LibraryApp
                 settings_page.Visibility = Visibility.Visible;
         }
 
-        private void Login_Button_Click(object sender, RoutedEventArgs e)
+        private async void Login_Button_Click(object sender, RoutedEventArgs e)
         {
             //Core.RegisterNewUser("Admin1","4444","Admin");
+            //Core.RegisterNewUser("User1", "1234", "User");
             try
             {
                 SaveStartUpData();
@@ -45,14 +45,25 @@ namespace LibraryApp
                     throw new Exception("Завершите настройки сервера.");
 
                 bool enter = false;
-                string error = "";
-                (enter, error) = Core.EnterUserIsCorrect(LoginTextBox.Text, PasswordTextBox.Password);
+                string message = "";
+                (enter, message) = Core!.EnterUserIsCorrect(LoginTextBox.Text, PasswordTextBox.Password);
                 if (enter)
                 {
-                    MessageBox.Show("YES");
+                    switch (message)
+                    {
+                        case "User":
+                            NavigationService.Navigate(new user_page.UserPage());
+                            break;
+                        case "Admin":
+                            NavigationService.Navigate(new admin_page.AdminPage());
+                            break;
+                        default:
+                            throw new Exception("Произошла ошибка при понятии роли!");
+                    }
+
                 }
                 else
-                    MessageBox.Show(error);
+                    MessageBox.Show(message);
             }
             catch (Microsoft.Data.SqlClient.SqlException ex)
             {
@@ -83,14 +94,14 @@ namespace LibraryApp
             catch { }
         }
 
-        private async void LoadStartUpData()
+        private void LoadStartUpData()
         {
             try
             {
 
                 using (FileStream fs = new FileStream("enterdata.json", FileMode.Open))
                 {
-                    Dictionary<string, string>? load = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(fs);
+                    Dictionary<string, string>? load = JsonSerializer.Deserialize<Dictionary<string, string>>(fs);
                     if (load != null)
                     {
                         ServerLinkTextBox.Text = load["ServerLink"];
@@ -98,6 +109,8 @@ namespace LibraryApp
                         ServerPasswordTextBox.Password = load["ServerPassword"];
                         SaveLoginCheckBox.IsChecked = Convert.ToBoolean(load["RememberLogin"]);
                         LoginTextBox.Text = load["UserLogin"];
+
+                        SetServer(load["ServerLink"], load["ServerName"], load["ServerPassword"]);
                     }
                 }
             }
@@ -108,6 +121,12 @@ namespace LibraryApp
         private void Server_Button_Click(object sender, RoutedEventArgs e)
         {
             settings_page.Visibility = Visibility.Collapsed;
+            SetServer(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
+            SaveStartUpData();
+        }
+
+        private void SetServer(string serverName, string Username, string Password)
+        {
             Core = new LibraryCore(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
         }
     }
