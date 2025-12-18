@@ -11,6 +11,8 @@
   <ItemGroup>
     <None Remove="win\start_page\bookcases_bg_darker.jpg" />
     <None Remove="win\start_page\gear.png" />
+    <None Remove="win\user_page\bookcases_bg.jpg" />
+    <None Remove="win\user_page\Взятые книги текст.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +32,8 @@
   <ItemGroup>
     <Resource Include="win\start_page\bookcases_bg_darker.jpg" />
     <Resource Include="win\start_page\gear.png" />
+    <Resource Include="win\user_page\bookcases_bg.jpg" />
+    <Resource Include="win\user_page\Взятые книги текст.png" />
   </ItemGroup>
 
 </Project>

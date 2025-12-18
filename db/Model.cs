@@ -1,4 +1,6 @@
-﻿public class Author
+﻿using Microsoft.EntityFrameworkCore;
+
+public class Author
 {
     public int ID { get; set; }
     public string Name { get; set; } = null!;
@@ -15,7 +17,7 @@ public class Book
     public string Description { get; set; } = null!;
     public DateTime ReleaseDate { get; set; }
     public int PageCount { get; set; }
-    public string ImagePath { get; set; } = null!;
+    public string? ImagePath { get; set; }
     public Author Author { get; set; } = null!;
     public BookAmount? Amount { get; set; }
     public ICollection<Loan> Loans { get; set; } = new List<Loan>();

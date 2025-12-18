@@ -7,26 +7,21 @@ using System.Threading.Tasks;
 
 namespace LibraryApp
 {
-    internal class LibraryCore
+    public class LibraryCore
     {
         private LibraryContext context;
 
 
-        public LibraryCore(string server_name,string user_name, string password)
+        public LibraryCore(string server_name, string user_name = "", string password = "")
         {
-            context = new LibraryContext(server_name, user_name, password);
-        }
-
-        public LibraryCore(string server_name)
-        {
-            context = new LibraryContext(server_name);
+            context = new LibraryContext() { ServerName = server_name, ServerUserName = user_name, ServerPassword = password };
         }
 
         public void RegisterNewUser(string login, string password, string usertype)
         {
 
-            var NewUser = new User() { Login = login, UserType = usertype, Password = CreatePasswordHash(password)};
-            context.RegisterNewUser(NewUser);
+            var NewUser = new User() { Login = login, UserType = usertype, Password = CreatePasswordHash(password) };
+            context.Users.Add(NewUser);
             context.SaveChanges();
         }
 
@@ -48,21 +43,39 @@ namespace LibraryApp
             return CryptographicOperations.FixedTimeEquals(output_hash, input_hash);
         }
 
-        public ICollection<Loan> GetLoansByReaderId(int id)
+        public ICollection<Loan> GetLoansByReader(Reader reader)
         {
-            return context.GetLoansByReaderId(id);
+            if (reader == null)
+                return new List<Loan>();
+            context.Entry(reader).Collection("Loans").Load();
+            return reader.Loans;
         }
 
-        public (bool,string) EnterUserIsCorrect(string Login, string password)
+        public (User?, string) EnteredUserIsCorrect(string Login, string password)
         {
-            User user = context.GetUserByLogin(Login);
+            User? user = context.Users.FirstOrDefault(u => u.Login == Login);
             if (user == null)
-                return (false, "Логин или пароль введены неправильно.");
+                return (null, "Логин или пароль введены неправильно.");
             if (!CheckPasswordHash(password, user.Password))
-                return (false, "Логин или пароль введены неправильно.");
-            return (true, user.UserType);
+                return (null, "Логин или пароль введены неправильно.");
+            return (user, "");
+        }
 
+        public Reader? GetReaderByUser(User user)
+        {
+            context.Entry(user).Reference("Reader").Load();
+            return user.Reader;
+        }
 
+        public Book? GetBookByID(int id)
+        {
+            Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault();
+            if (book == null)
+                return null;
+            context.Entry(book).Reference("Author").Load();
+            context.Entry(book).Reference("Amount").Load();
+            context.Entry(book).Collection("Loans").Load();
+            return book;
         }
     }
 }

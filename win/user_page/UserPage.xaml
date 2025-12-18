@@ -11,11 +11,17 @@
     <Grid>
         <Image Height="auto" Width="auto" Stretch="UniformToFill" Source="/win/user_page/bookcases_bg.jpg"/>
 
-        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="500" Width="900" Margin="15">
-            <Label Content="Взятые книги" FontSize="35" FontWeight="ExtraBold" FontFamily="Arial" Foreground="#FF1B1B1B" />
-            <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" VerticalAlignment="Bottom" Height="460" Width="900" Background="#CCF0F0F0"/>
-        </StackPanel>
-        
+        <Label x:Name="UserNameLabel" FontSize="40" FontWeight="ExtraBold" FontFamily="Arial" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="14"/>
+        <Image Height="80" Width="390" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,60,0,0" Source="/win/user_page/Взятые книги текст.png"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="BooksGrid" Grid.Column="0" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto" Background="#CCF0F0F0" BorderThickness="5" BorderBrush="Black" IsReadOnly="True" Margin="5,120,0,5"/>
+        </Grid>
+
+
 
 
     </Grid>

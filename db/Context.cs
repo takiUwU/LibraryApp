@@ -13,19 +13,6 @@ public class LibraryContext : DbContext
     public string ServerUserName = "";
     public string ServerPassword = "";
 
-    public LibraryContext(string serverName, string Username, string Password)
-    {
-        ServerName = serverName;
-        ServerUserName = Username;
-        ServerPassword = Password;
-    }
-
-    public LibraryContext(string serverName) 
-    {
-        ServerName = serverName;
-    }
-
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (string.IsNullOrEmpty(ServerUserName))
@@ -60,30 +47,11 @@ public class LibraryContext : DbContext
             .HasForeignKey(b => b.BookID)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Login)
+            .IsUnique();
+
         modelBuilder.Entity<BookAmount>().HasKey(ba => ba.BookID);
-    }
-    
-    public void RegisterNewUser(User new_user)
-    {
-        Users.Add(new_user);
-    }
-
-    public ICollection<Loan> GetLoansByReaderId(int id)
-    {
-        Reader currentReader = Readers.FirstOrDefault(u => u.ID == id);
-        if (currentReader == null)
-            return new List<Loan>();
-        return currentReader.Loans;
-    }
-
-
-
-    public User GetUserByLogin(string login)
-    {
-        User user = Users.FirstOrDefault(u => u.Login == login);
-        if (user == null)
-            throw new Exception("Пользователь не найден!");
-        return user;
     }
 }
 

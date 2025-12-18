@@ -21,7 +21,6 @@ namespace LibraryApp.win.start_page
     public partial class StartPage : Page
     {
         //  26.203.160.220\SQLEXPRESS,1433   taki     4444
-        LibraryCore? Core = null;
         public StartPage()
         {
             InitializeComponent();
@@ -34,7 +33,12 @@ namespace LibraryApp.win.start_page
                 settings_page.Visibility = Visibility.Visible;
         }
 
-        private async void Login_Button_Click(object sender, RoutedEventArgs e)
+        private void Login_Button_Click(object sender, RoutedEventArgs e)
+        {
+            TryLogin(LoginTextBox.Text, PasswordTextBox.Password);
+        }
+
+        private void TryLogin(string Login, string password)
         {
             //Core.RegisterNewUser("Admin1","4444","Admin");
             //Core.RegisterNewUser("User1", "1234", "User");
@@ -44,16 +48,22 @@ namespace LibraryApp.win.start_page
                 if (settings_page.Visibility == Visibility.Visible)
                     throw new Exception("Завершите настройки сервера.");
 
-                bool enter = false;
+                User? user = null;
                 string message = "";
-                (enter, message) = Core!.EnterUserIsCorrect(LoginTextBox.Text, PasswordTextBox.Password);
-                if (enter)
+                (user, message) = MainFrame.MainFrame.Core!.EnteredUserIsCorrect(Login, password);
+                if (user != null)
                 {
-                    switch (message)
+                    switch (user.UserType)
                     {
                         case "User":
-                            NavigationService.Navigate(new user_page.UserPage());
-                            break;
+                            Reader? current_reader = MainFrame.MainFrame.Core.GetReaderByUser(user);
+                            if (current_reader != null)
+                            {
+                                current_reader.Loans = MainFrame.MainFrame.Core.GetLoansByReader(current_reader);
+                                NavigationService.Navigate(new user_page.UserPage(current_reader));
+                                break;
+                            }
+                            throw new Exception("Произошла ошибка при заходе на пользователя!");
                         case "Admin":
                             NavigationService.Navigate(new admin_page.AdminPage());
                             break;
@@ -74,6 +84,7 @@ namespace LibraryApp.win.start_page
                 MessageBox.Show(ex.Message);
             }
         }
+
 
         private async void SaveStartUpData()
         {
@@ -127,7 +138,7 @@ namespace LibraryApp.win.start_page
 
         private void SetServer(string serverName, string Username, string Password)
         {
-            Core = new LibraryCore(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
+            MainFrame.MainFrame.Core = new LibraryCore(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
         }
     }
 }
