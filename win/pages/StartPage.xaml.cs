@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LibraryApp.win.start_page
+namespace LibraryApp.win.pages
 {
     public partial class StartPage : Page
     {
@@ -31,6 +31,8 @@ namespace LibraryApp.win.start_page
         {
             if (settings_page.Visibility == Visibility.Collapsed)
                 settings_page.Visibility = Visibility.Visible;
+            //MainFrame.MainFrame.Core.RegisterNewUser("Admin1", "4444", "Admin");
+            //MainFrame.MainFrame.Core.RegisterNewUser("Lib1", "1234", "Librarian");
         }
 
         private void Login_Button_Click(object sender, RoutedEventArgs e)
@@ -40,8 +42,6 @@ namespace LibraryApp.win.start_page
 
         private void TryLogin(string Login, string password)
         {
-            //Core.RegisterNewUser("Admin1","4444","Admin");
-            //Core.RegisterNewUser("User1", "1234", "User");
             try
             {
                 SaveStartUpData();
@@ -53,19 +53,14 @@ namespace LibraryApp.win.start_page
                 (user, message) = MainFrame.MainFrame.Core!.EnteredUserIsCorrect(Login, password);
                 if (user != null)
                 {
-                    switch (user.UserType)
+                    var role = MainFrame.MainFrame.Core!.GetUserRole(user);
+                    switch (role)
                     {
-                        case "User":
-                            Reader? current_reader = MainFrame.MainFrame.Core.GetReaderByUser(user);
-                            if (current_reader != null)
-                            {
-                                current_reader.Loans = MainFrame.MainFrame.Core.GetLoansByReader(current_reader);
-                                NavigationService.Navigate(new user_page.UserPage(current_reader));
-                                break;
-                            }
-                            throw new Exception("Произошла ошибка при заходе на пользователя!");
                         case "Admin":
-                            NavigationService.Navigate(new admin_page.AdminPage());
+                            NavigationService.Navigate(new AdminPage());
+                            break;
+                        case "Librarian":
+                            NavigationService.Navigate(new LibrarianPage());
                             break;
                         default:
                             throw new Exception("Произошла ошибка при понятии роли!");
@@ -77,7 +72,7 @@ namespace LibraryApp.win.start_page
             }
             catch (Microsoft.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show($"Проблема произошла при попытки связи с базе данных. Попросите помощи у администраторов.\n\n Ошибка: {ex.Message}.");
+                MessageBox.Show($"Проблема произошла при попытки связи с базе данных.\n\n Ошибка: {ex.Message}.");
             }
             catch (Exception ex)
             {
@@ -88,10 +83,12 @@ namespace LibraryApp.win.start_page
 
         private async void SaveStartUpData()
         {
+            var path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\LibraryApp";
+            if (Directory.Exists(path) == false)
+                Directory.CreateDirectory(path);
             try
-            {
-
-                using (FileStream fs = new FileStream("enterdata.json", FileMode.OpenOrCreate))
+            {                
+                using (FileStream fs = new FileStream($"{path}\\enterdata.json", FileMode.OpenOrCreate))
                 {
                     Dictionary<string, string> save = new();
                     save["ServerLink"] = ServerLinkTextBox.Text;
@@ -102,15 +99,19 @@ namespace LibraryApp.win.start_page
                     await JsonSerializer.SerializeAsync<Dictionary<string, string>>(fs, save);
                 }
             }
-            catch { }
+            catch (Exception e){
+                MessageBox.Show(e.Message);
+            }
         }
 
         private void LoadStartUpData()
         {
             try
             {
-
-                using (FileStream fs = new FileStream("enterdata.json", FileMode.Open))
+                var path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\LibraryApp";
+                if (!Directory.Exists(path))
+                    return;
+                using (FileStream fs = new FileStream($"{path}\\enterdata.json", FileMode.Open))
                 {
                     Dictionary<string, string>? load = JsonSerializer.Deserialize<Dictionary<string, string>>(fs);
                     if (load != null)

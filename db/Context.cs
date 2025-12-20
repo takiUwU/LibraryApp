@@ -8,17 +8,22 @@ public class LibraryContext : DbContext
     public DbSet<Loan> Loans { get; set; }
     public DbSet<Reader> Readers { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<UserType> UserTypes { get; set; }
 
-    public string ServerName = "";
-    public string ServerUserName = "";
-    public string ServerPassword = "";
+    //public string ServerName = "";
+    //public string ServerUserName = "";
+    //public string ServerPassword = "";
+    public string ServerName = "26.203.160.220\\SQLEXPRESS,1433";
+    public string ServerUserName = "taki";
+    public string ServerPassword = "4444";
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (string.IsNullOrEmpty(ServerUserName))
-            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", ServerName), sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);});
+            optionsBuilder.UseSqlServer($"SERVER={ServerName};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); });
         else
-            optionsBuilder.UseSqlServer(string.Format("SERVER={0};Database=LibraryAppDB;TrustServerCertificate=true;User Id={1};Password={2};", ServerName, ServerUserName, ServerPassword), sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); });
+            optionsBuilder.UseSqlServer($"SERVER={ServerName};Database=LibraryAppDB;TrustServerCertificate=true;User Id={ServerUserName};Password={ServerPassword};", sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); });
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,6 +51,12 @@ public class LibraryContext : DbContext
             .WithMany(b => b.Loans)
             .HasForeignKey(b => b.BookID)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<User>()
+        .HasOne(u => u.UserType)
+        .WithMany(ut => ut.Users)
+        .HasForeignKey(u => u.TypeId)
+        .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Login)

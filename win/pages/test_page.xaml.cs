@@ -13,14 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LibraryApp.win.admin_page
+namespace LibraryApp.win.pages
 {
-    /// <summary>
-    /// Логика взаимодействия для AdminPage.xaml
-    /// </summary>
-    public partial class AdminPage : Page
+    public partial class test_page : Page
     {
-        public AdminPage()
+        public test_page()
         {
             InitializeComponent();
         }

@@ -51,15 +51,22 @@ public class Reader
     public string Name { get; set; } = null!;
     public string Phone { get; set; } = null!;
     public ICollection<Loan> Loans { get; set; } = new List<Loan>();
-    public User User { get; set; } = null!;
 }
+
 
 public class User
 {
     public int ID { get; set; }
-    public string UserType {  get; set; } = null!;
+    public int TypeId {  get; set; }
     public string Login { get; set; } = null!;
     public string Password { get; set; } = null!;
-    public int? ReaderID { get; set; }
-    public Reader? Reader { get; set; } = null!;
+    public UserType UserType { get; set; } = null!;
+}
+
+
+public class UserType
+{
+    public int ID { get; set; }
+    public string Name { get; set; } = null!;
+    public ICollection<User> Users { get; set; } = new List<User>();
 }

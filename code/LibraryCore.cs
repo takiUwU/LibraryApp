@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LibraryApp.code;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -20,35 +22,15 @@ namespace LibraryApp
         public void RegisterNewUser(string login, string password, string usertype)
         {
 
-            var NewUser = new User() { Login = login, UserType = usertype, Password = CreatePasswordHash(password) };
+            var NewUser = new User() { Login = login, UserType = context.UserTypes.Where(ut => ut.Name == usertype).First(), Password = PasswordManager.CreatePasswordHash(password) };
             context.Users.Add(NewUser);
             context.SaveChanges();
         }
 
-
-        private string CreatePasswordHash(string password)
+        public string GetUserRole(User user)
         {
-            byte[] salt = RandomNumberGenerator.GetBytes(16);
-            byte[] hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, 20000, HashAlgorithmName.SHA512, 32);
-            return $"{Convert.ToHexString(salt)};{Convert.ToHexString(hash)}";
-        }
-
-
-        private bool CheckPasswordHash(string password, string hashAndSalt)
-        {
-            byte[] input_salt = Convert.FromHexString(hashAndSalt.Split(";").First());
-            byte[] input_hash = Convert.FromHexString(hashAndSalt.Split(";").Last());
-            byte[] output_hash = Rfc2898DeriveBytes.Pbkdf2(password, input_salt, 20000, HashAlgorithmName.SHA512, 32);
-
-            return CryptographicOperations.FixedTimeEquals(output_hash, input_hash);
-        }
-
-        public ICollection<Loan> GetLoansByReader(Reader reader)
-        {
-            if (reader == null)
-                return new List<Loan>();
-            context.Entry(reader).Collection("Loans").Load();
-            return reader.Loans;
+            context.Entry(user).Reference("UserType").Load();
+            return user.UserType.Name;
         }
 
         public (User?, string) EnteredUserIsCorrect(string Login, string password)
@@ -56,15 +38,18 @@ namespace LibraryApp
             User? user = context.Users.FirstOrDefault(u => u.Login == Login);
             if (user == null)
                 return (null, "Логин или пароль введены неправильно.");
-            if (!CheckPasswordHash(password, user.Password))
+            if (!PasswordManager.CheckPasswordHash(password, user.Password))
                 return (null, "Логин или пароль введены неправильно.");
             return (user, "");
         }
 
-        public Reader? GetReaderByUser(User user)
+
+        public ICollection<Loan> GetLoansByReader(Reader reader)
         {
-            context.Entry(user).Reference("Reader").Load();
-            return user.Reader;
+            if (reader == null)
+                return new List<Loan>();
+            var loans = context.Loans.Where(l => l.Reader == reader).Include(l => l.Book).ToList();
+            return loans;
         }
 
         public Book? GetBookByID(int id)
