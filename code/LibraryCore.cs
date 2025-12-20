@@ -1,25 +1,27 @@
 ﻿using LibraryApp.code;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LibraryApp
 {
-    public class LibraryCore
+    static public class LibraryCore
     {
-        private LibraryContext context;
+        static private LibraryContext context = new LibraryContext();
 
-
-        public LibraryCore(string server_name, string user_name = "", string password = "")
+        static public void SetServer(string server_name, string user_name = "", string password = "")
         {
             context = new LibraryContext() { ServerName = server_name, ServerUserName = user_name, ServerPassword = password };
         }
 
-        public void RegisterNewUser(string login, string password, string usertype)
+        static public void RegisterNewUser(string login, string password, string usertype)
         {
 
             var NewUser = new User() { Login = login, UserType = context.UserTypes.Where(ut => ut.Name == usertype).First(), Password = PasswordManager.CreatePasswordHash(password) };
@@ -27,13 +29,13 @@ namespace LibraryApp
             context.SaveChanges();
         }
 
-        public string GetUserRole(User user)
+        static public string GetUserRole(User user)
         {
             context.Entry(user).Reference("UserType").Load();
             return user.UserType.Name;
         }
 
-        public (User?, string) EnteredUserIsCorrect(string Login, string password)
+        static public (User?, string) EnteredUserIsCorrect(string Login, string password)
         {
             User? user = context.Users.FirstOrDefault(u => u.Login == Login);
             if (user == null)
@@ -44,7 +46,7 @@ namespace LibraryApp
         }
 
 
-        public ICollection<Loan> GetLoansByReader(Reader reader)
+        static public ICollection<Loan> GetLoansByReader(Reader reader)
         {
             if (reader == null)
                 return new List<Loan>();
@@ -52,7 +54,7 @@ namespace LibraryApp
             return loans;
         }
 
-        public Book? GetBookByID(int id)
+        static public Book? GetBookByID(int id)
         {
             Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault();
             if (book == null)
@@ -61,6 +63,26 @@ namespace LibraryApp
             context.Entry(book).Reference("Amount").Load();
             context.Entry(book).Collection("Loans").Load();
             return book;
+        }
+
+        static public (bool,string) TryCreateReader(string phone, string name)
+        {
+            try
+            {
+                if (!Regex.Match(phone, @"^(\+[0-9]{9})$").Success)
+                    throw new Exception("Номер телефона не подходит. Номер телефона надо вводить со знака +.");
+                context.Readers.Add(new Reader() { Phone = phone, Name = name });
+                context.SaveChanges();
+                return (true,"Успешно добавлен!");
+            }
+            catch (DbUpdateException)
+            {
+                return (false, "Данный номер телефона уже зарегистрирован.");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
         }
     }
 }

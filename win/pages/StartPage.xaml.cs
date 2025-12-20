@@ -50,10 +50,10 @@ namespace LibraryApp.win.pages
 
                 User? user = null;
                 string message = "";
-                (user, message) = MainFrame.MainFrame.Core!.EnteredUserIsCorrect(Login, password);
+                (user, message) = LibraryCore.EnteredUserIsCorrect(Login, password);
                 if (user != null)
                 {
-                    var role = MainFrame.MainFrame.Core!.GetUserRole(user);
+                    var role = LibraryCore.GetUserRole(user);
                     switch (role)
                     {
                         case "Admin":
@@ -139,7 +139,7 @@ namespace LibraryApp.win.pages
 
         private void SetServer(string serverName, string Username, string Password)
         {
-            MainFrame.MainFrame.Core = new LibraryCore(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
+            LibraryCore.SetServer(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
         }
     }
 }

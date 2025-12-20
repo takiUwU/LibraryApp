@@ -62,6 +62,10 @@ public class LibraryContext : DbContext
             .HasIndex(u => u.Login)
             .IsUnique();
 
+        modelBuilder.Entity<Reader>()
+            .HasIndex(r => r.Phone)
+            .IsUnique();
+
         modelBuilder.Entity<BookAmount>().HasKey(ba => ba.BookID);
     }
 }

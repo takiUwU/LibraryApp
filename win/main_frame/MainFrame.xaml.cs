@@ -18,7 +18,6 @@ namespace LibraryApp.win.MainFrame
 {
     public partial class MainFrame : Window
     {
-        static public LibraryCore? Core = null;
         public MainFrame()
         {
             InitializeComponent();
