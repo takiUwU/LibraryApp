@@ -21,6 +21,7 @@
     <None Remove="win\pages\bookcases_bg_darkest.jpg" />
     <None Remove="win\pages\exit_button.png" />
     <None Remove="win\pages\gear.png" />
+    <None Remove="win\pages\Librarian\back_button.png" />
     <None Remove="win\pages\Librarian\bookcases_bg_darkest.jpg" />
     <None Remove="win\pages\Librarian\exit_button.png" />
   </ItemGroup>
@@ -45,6 +46,7 @@
     <Resource Include="win\pages\bookcases_bg_darkest.jpg" />
     <Resource Include="win\pages\exit_button.png" />
     <Resource Include="win\pages\gear.png" />
+    <Resource Include="win\pages\Librarian\back_button.png" />
     <Resource Include="win\pages\Librarian\bookcases_bg_darkest.jpg" />
     <Resource Include="win\pages\Librarian\exit_button.png" />
   </ItemGroup>

@@ -25,11 +25,12 @@ namespace LibraryApp.win.pages
 
         private void Return_Book_Button(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new LibrarianSelectReader() {ReturnMode = true});
         }
 
         private void Give_Book_Button(object sender, RoutedEventArgs e)
         {
+            NavigationService.Navigate(new LibrarianSelectReader() { ReturnMode = false});
 
         }
 

@@ -69,6 +69,10 @@ namespace LibraryApp
         {
             try
             {
+                if (string.IsNullOrEmpty(phone))
+                    throw new Exception("Телефон не может быть пустым!");
+                if (string.IsNullOrEmpty(name))
+                    throw new Exception("Имя не может быть пустым!");
                 if (!Regex.Match(phone, @"^(\+[0-9]{9})$").Success)
                     throw new Exception("Номер телефона не подходит. Номер телефона надо вводить со знака +.");
                 context.Readers.Add(new Reader() { Phone = phone, Name = name });

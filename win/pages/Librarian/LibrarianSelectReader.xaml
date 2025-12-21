@@ -1,22 +1,22 @@
-﻿<Page x:Class="LibraryApp.win.pages.librarian.LibrarianCreateNewReader"
+﻿<Page x:Class="LibraryApp.win.pages.LibrarianSelectReader"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:LibraryApp.win.pages.librarian"
+      xmlns:local="clr-namespace:LibraryApp.win.pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="LibrarianCreateNewReader">
+      Title="LibrarianSelectReader">
 
     <Grid>
         <Image Height="auto" Width="auto" Stretch="UniformToFill" Source="/win/pages/librarian/bookcases_bg_darkest.jpg" />
 
-        <Image x:Name="exit_button" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5" Height="80" MouseLeftButtonUp="Exit_MouseClick" Source="/win/pages/Librarian/back_button.png"/>
+        <Image x:Name="exit_button" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5" Height="80" MouseLeftButtonUp="Exit_MouseClick" Source="/win/pages/librarian/back_button.png"/>
 
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
                 <RowDefinition Height="1.2*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -40,24 +40,20 @@
             </Rectangle>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20" Grid.Row="1" Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
                         <RowDefinition Height="2*"/>
-                        <RowDefinition Height="3*"/>
                         <RowDefinition Height="2*"/>
-                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
-                    <Label Content="Новый читатель" FontSize="30" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Label Content="Выбор читателя" FontSize="25" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                     <Label Content="Телефон читателя" FontSize="30" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="1" VerticalAlignment="Center"/>
-                    <TextBox x:Name="PhoneTextBox"  BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="34" VerticalContentAlignment="Center" Grid.Row="2"/>
-                    <Label Content="Имя читателя" FontSize="30" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="3" VerticalAlignment="Center"/>
-                    <TextBox x:Name="NameTextBox" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="34" VerticalContentAlignment="Center" Grid.Row="4"/>
+                    <TextBox x:Name="PhoneTextBox"  BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="30" VerticalContentAlignment="Center" Grid.Row="2"/>
                 </Grid>
-                <Button x:Name="Register_Reader" Grid.Row="3" Content="Добавить" Margin="5" FontSize="35" FontWeight="SemiBold" Click="Reqister_User_Button" FontFamily="Arial" BorderThickness="5"/>
+                <Button x:Name="Select_Reader" Grid.Row="2" Content="Выбрать читателя" Margin="5" FontSize="30" FontWeight="SemiBold" Click="Select_User_Button" FontFamily="Arial" BorderThickness="5"/>
             </Grid>
         </Grid>
 

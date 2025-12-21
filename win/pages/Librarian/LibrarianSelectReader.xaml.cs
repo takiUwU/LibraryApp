@@ -13,11 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LibraryApp.win.pages.librarian
+namespace LibraryApp.win.pages
 {
-    public partial class LibrarianCreateNewReader : Page
+    public partial class LibrarianSelectReader : Page
     {
-        public LibrarianCreateNewReader()
+        public bool ReturnMode;
+        public LibrarianSelectReader()
         {
             InitializeComponent();
         }
@@ -29,20 +30,12 @@ namespace LibraryApp.win.pages.librarian
 
         private void Reqister_User_Button(object sender, RoutedEventArgs e)
         {
-            Try_Register_User(PhoneTextBox.Text, NameTextBox.Text);
+
         }
 
-        private void Try_Register_User(string phone, string name)
+        private void Select_User_Button(object sender, RoutedEventArgs e)
         {
-            bool created;
-            string message;
-            (created, message) = LibraryCore.TryCreateReader(phone, name);
 
-            MessageBox.Show(message);
-            if (created)
-            {
-                NavigationService.Navigate(new LibrarianPage());
-            }
         }
     }
 }
