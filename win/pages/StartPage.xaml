@@ -11,34 +11,9 @@
     <Grid>
         <Image Height="auto" Width="auto" Stretch="UniformToFill" Source="/win/pages/bookcases_bg_darker.jpg"/>
 
-        <Image x:Name="gear_button" VerticalAlignment="Top" HorizontalAlignment="Right" Source="/win/pages/gear.png" Height="50" MouseLeftButtonUp="Grid_MouseLeftButtonUp" Opacity="0.3"/>
-        <Grid x:Name="settings_page" Visibility="Collapsed" Height="210" Width="300" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15,70">
-            <Rectangle x:Name="settings_BG"  StrokeThickness="7"  RadiusX="2" RadiusY="2">
-                <Rectangle.Stroke>
-                    <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
-                        <GradientStop Color="White"/>
-                        <GradientStop Color="#FFADADAD" Offset="1"/>
-                    </LinearGradientBrush>
-                </Rectangle.Stroke>
-                <Rectangle.Fill>
-                    <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
-                        <GradientStop Color="White"/>
-                        <GradientStop Color="#FFADADAD" Offset="1"/>
-                    </LinearGradientBrush>
-                </Rectangle.Fill>
-            </Rectangle>
-            <StackPanel>
-                <Label Content="Ссылка сервера" FontSize="14" FontWeight="ExtraBold" FontFamily="Arial" HorizontalAlignment="Center"/>
-                <TextBox x:Name="ServerLinkTextBox"  Width="250" Height="20" Margin="0,0,0,3" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="12" VerticalContentAlignment="Center"  />
-                <Label Content="Логин сервера" FontSize="14" FontWeight="ExtraBold" FontFamily="Arial" HorizontalAlignment="Center"/>
-                <TextBox x:Name="ServerNameTextBox"  Width="250" Height="20" Margin="0,0,0,3" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="12" VerticalContentAlignment="Center" />
-                <Label Content="Пароль сервера" FontSize="14" FontWeight="ExtraBold" FontFamily="Arial" HorizontalAlignment="Center"/>
-                <PasswordBox x:Name="ServerPasswordTextBox" Width="250" Height="20" Margin="0,0,0,3" BorderBrush="Black" BorderThickness="2" FontSize="12" VerticalContentAlignment="Center"/>
-                <Button x:Name="Server_Button" Content="ПОДТВЕРДИТЬ" Height="40" Margin="40,13,40,0" FontSize="13" FontWeight="SemiBold" Click="Server_Button_Click" FontFamily="Arial"/>
-            </StackPanel>
-        </Grid>
 
-
+        <Grid x:Name="OpacityBox">
+            
         <Rectangle Height="300" StrokeThickness="7" Width="300" RadiusX="5" RadiusY="5">
             <Rectangle.Stroke>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
@@ -53,15 +28,15 @@
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Label Content="Логин" FontSize="20" FontWeight="ExtraBold" FontFamily="Arial"/>
-            <TextBox x:Name="LoginTextBox"  Width="250" Height="50" Margin="0,0,0,10" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="24" VerticalContentAlignment="Center" />
-            <Label Content="Пароль" FontSize="20" FontWeight="ExtraBold" FontFamily="Arial"/>
-            <PasswordBox x:Name="PasswordTextBox" Width="250" Height="50" Margin="0,0,0,10" BorderBrush="Black" FontSize="24" VerticalContentAlignment="Center"/>
-
-            <CheckBox x:Name="SaveLoginCheckBox" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Запомнить логин" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" FontFamily="Arial"/>
-            <Button x:Name="Login_Button" Content="ВХОД" Height="50" FontSize="20" FontWeight="SemiBold" Click="Login_Button_Click" FontFamily="Arial"/>
-        </StackPanel>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="Логин" FontSize="20" FontWeight="ExtraBold" FontFamily="Arial"/>
+                <TextBox x:Name="LoginTextBox"  Width="250" Height="50" Margin="0,0,0,10" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="24" VerticalContentAlignment="Center" />
+                <Label Content="Пароль" FontSize="20" FontWeight="ExtraBold" FontFamily="Arial"/>
+                <PasswordBox x:Name="PasswordTextBox" Width="250" Height="50" Margin="0,0,0,10" BorderBrush="Black" FontSize="24" VerticalContentAlignment="Center"/>
+                <CheckBox x:Name="SaveLoginCheckBox" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Запомнить логин" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" FontFamily="Arial"/>
+                <Button x:Name="Login_Button" Content="ВХОД" Height="50" FontSize="20" FontWeight="SemiBold" Click="Login_Button_Click" FontFamily="Arial"/>
+            </StackPanel>
+        </Grid>
 
     </Grid>
 </Page>

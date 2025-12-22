@@ -10,20 +10,20 @@ public class LibraryContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<UserType> UserTypes { get; set; }
 
-    //public string ServerName = "";
-    //public string ServerUserName = "";
-    //public string ServerPassword = "";
-    public string ServerName = "26.203.160.220\\SQLEXPRESS,1433";
-    public string ServerUserName = "taki";
-    public string ServerPassword = "4444";
+    public string ServerName = "";
+    public string ServerUserName = "";
+    public string ServerPassword = "";
+    //public string ServerName = "26.203.160.220\\SQLEXPRESS,1433";
+    //public string ServerUserName = "taki";
+    //public string ServerPassword = "4444";
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (string.IsNullOrEmpty(ServerUserName))
-            optionsBuilder.UseSqlServer($"SERVER={ServerName};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); });
+            optionsBuilder.UseSqlServer($"SERVER={ServerName};Database=LibraryAppDB;Trusted_Connection=True;TrustServerCertificate=true;", sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(2), errorNumbersToAdd: null); });
         else
-            optionsBuilder.UseSqlServer($"SERVER={ServerName};Database=LibraryAppDB;TrustServerCertificate=true;User Id={ServerUserName};Password={ServerPassword};", sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); });
+            optionsBuilder.UseSqlServer($"SERVER={ServerName};Database=LibraryAppDB;TrustServerCertificate=true;User Id={ServerUserName};Password={ServerPassword};", sqlOptions => { sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(2), errorNumbersToAdd: null); });
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

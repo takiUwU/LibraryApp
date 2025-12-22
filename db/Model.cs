@@ -15,9 +15,8 @@ public class Book
     public string Name { get; set; } = null!;
     public int AuthorID { get; set; }
     public string Description { get; set; } = null!;
-    public DateTime ReleaseDate { get; set; }
+    public DateOnly ReleaseDate { get; set; }
     public int PageCount { get; set; }
-    public string? ImagePath { get; set; }
     public Author Author { get; set; } = null!;
     public BookAmount? Amount { get; set; }
     public ICollection<Loan> Loans { get; set; } = new List<Loan>();

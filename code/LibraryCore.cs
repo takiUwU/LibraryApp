@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Navigation;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LibraryApp
@@ -16,9 +17,12 @@ namespace LibraryApp
     {
         static private LibraryContext context = new LibraryContext();
 
-        static public void SetServer(string server_name, string user_name = "", string password = "")
+        static public void SetServer(string server_name, string? user_name = "", string? password = "")
         {
-            context = new LibraryContext() { ServerName = server_name, ServerUserName = user_name, ServerPassword = password };
+            if (user_name == null || password == null)
+                context = new LibraryContext() { ServerName = server_name };
+            else
+                context = new LibraryContext() { ServerName = server_name, ServerUserName = user_name, ServerPassword = password };
         }
 
         static public void RegisterNewUser(string login, string password, string usertype)
@@ -50,7 +54,7 @@ namespace LibraryApp
         {
             if (reader == null)
                 return new List<Loan>();
-            var loans = context.Loans.Where(l => l.Reader == reader).Include(l => l.Book).ToList();
+            var loans = context.Loans.Where(l => l.Reader == reader).Include(l => l.Book).ThenInclude(b => b.Author).ToList();
             return loans;
         }
 
@@ -87,6 +91,42 @@ namespace LibraryApp
             {
                 return (false, ex.Message);
             }
+        }
+
+        static public Reader? FindReaderByPhone(string phone)
+        {
+            Reader? reader = context.Readers.Where(r => r.Phone == phone).Include(r => r.Loans).ThenInclude(l => l.Book).FirstOrDefault();
+            if (reader == null)
+                return null;
+            
+            return reader;
+        }
+
+        static public ICollection<Book> GetAllAvailableBooks()
+        {
+            return context.Books.Include(b => b.Amount).Include(b => b.Author).Where(b => ((b.Amount != null)) && (b.Amount.Amount > 0)).ToList(); 
+        }
+
+        static public bool CanReaderLoanABook(Reader reader)
+        {
+            context.Entry(reader).Collection("Loans").Load();
+            int allowed = 5;
+            allowed -= reader.Loans.Where(l => l.ReturnDate == null).Count();
+            allowed -= reader.Loans.Where(l => l.ReturnDate != null).Where(l => (l.ReturnDate!.Value - l.BorrowDate).TotalDays > 14).Count();
+            return  allowed >= 0;
+        }
+
+        static public void CreateALoan(Reader reader, Book book)
+        {
+            BookAmount? book_amount = context.BookAmounts.Where(ba => ba.BookID == book.ID).FirstOrDefault();
+            if (book_amount == null)
+                throw new Exception("Количество книг не задано.");
+            if (book_amount.Amount <= 0)
+                throw new Exception("Книг не достаточно");
+            book_amount.Amount -= 1;
+            Loan new_loan = new Loan() { ReaderID = reader.ID, BookID = book.ID, BorrowDate = DateTime.Now};
+            context.Loans.Add(new_loan);
+            context.SaveChanges();
         }
     }
 }

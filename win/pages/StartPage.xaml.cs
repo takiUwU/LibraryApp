@@ -1,8 +1,12 @@
-﻿using System;
+﻿using LibraryApp.code;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.UserSecrets;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,37 +20,36 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
+
 namespace LibraryApp.win.pages
 {
     public partial class StartPage : Page
     {
-        //  26.203.160.220\SQLEXPRESS,1433   taki     4444
         public StartPage()
         {
             InitializeComponent();
             LoadStartUpData();
         }
 
-        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private async void Login_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (settings_page.Visibility == Visibility.Collapsed)
-                settings_page.Visibility = Visibility.Visible;
-            //MainFrame.MainFrame.Core.RegisterNewUser("Admin1", "4444", "Admin");
-            //MainFrame.MainFrame.Core.RegisterNewUser("Lib1", "1234", "Librarian");
+            foreach (UIElement child in OpacityBox.Children)
+                child.IsEnabled = false;
+            OpacityBox.Opacity = 0.4;
+            string login = LoginTextBox.Text;
+            string password = PasswordTextBox.Password;
+            Task new_task = await Task.Run(() => Task.FromResult(TryLogin(login, password)));
+            foreach (UIElement child in OpacityBox.Children)
+                child.IsEnabled = true;
+            OpacityBox.Opacity = 1;
         }
 
-        private void Login_Button_Click(object sender, RoutedEventArgs e)
-        {
-            TryLogin(LoginTextBox.Text, PasswordTextBox.Password);
-        }
-
-        private void TryLogin(string Login, string password)
+        private async Task TryLogin(string Login, string password)
         {
             try
             {
                 SaveStartUpData();
-                if (settings_page.Visibility == Visibility.Visible)
-                    throw new Exception("Завершите настройки сервера.");
 
                 User? user = null;
                 string message = "";
@@ -54,21 +57,29 @@ namespace LibraryApp.win.pages
                 if (user != null)
                 {
                     var role = LibraryCore.GetUserRole(user);
-                    switch (role)
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        case "Admin":
-                            NavigationService.Navigate(new AdminPage());
-                            break;
-                        case "Librarian":
-                            NavigationService.Navigate(new LibrarianPage());
-                            break;
-                        default:
-                            throw new Exception("Произошла ошибка при понятии роли!");
-                    }
+                        switch (role)
+                        {
+                            case "Admin":
+                                NavigationService.Navigate(new AdminPage());
+                                break;
+                            case "Librarian":
+                                NavigationService.Navigate(new LibrarianPage());
+                                break;
+                            default:
+                                throw new Exception("Произошла ошибка при понятии роли!");
+                        }
+                    });
 
                 }
                 else
-                    MessageBox.Show(message);
+                {
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        MessageBox.Show(message);
+                    });
+                }
             }
             catch (Microsoft.Data.SqlClient.SqlException ex)
             {
@@ -76,6 +87,7 @@ namespace LibraryApp.win.pages
             }
             catch (Exception ex)
             {
+                
                 MessageBox.Show(ex.Message);
             }
         }
@@ -87,25 +99,40 @@ namespace LibraryApp.win.pages
             if (Directory.Exists(path) == false)
                 Directory.CreateDirectory(path);
             try
-            {                
+            {
                 using (FileStream fs = new FileStream($"{path}\\enterdata.json", FileMode.OpenOrCreate))
                 {
                     Dictionary<string, string> save = new();
-                    save["ServerLink"] = ServerLinkTextBox.Text;
-                    save["ServerName"] = ServerNameTextBox.Text;
-                    save["ServerPassword"] = ServerPasswordTextBox.Password;
+                    await Application.Current.Dispatcher.InvokeAsync(() => {
                     save["UserLogin"] = SaveLoginCheckBox.IsChecked == true ? LoginTextBox.Text : "";
                     save["RememberLogin"] = SaveLoginCheckBox.IsChecked == true ? "True" : "False";
+                    });
+                    
                     await JsonSerializer.SerializeAsync<Dictionary<string, string>>(fs, save);
                 }
             }
-            catch (Exception e){
+            catch (Exception e)
+            {
                 MessageBox.Show(e.Message);
             }
         }
 
         private void LoadStartUpData()
         {
+
+            var config = new ConfigurationBuilder().AddUserSecrets<LoginDataClass>().Build();
+
+            var secretProvider = config.Providers.First();
+            secretProvider.TryGet("ServerConnection", out var ServerConnection);
+            secretProvider.TryGet("ServerLogin", out var ServerLogin);
+            secretProvider.TryGet("ServerPassword", out var ServerPassword);
+            if (ServerConnection == null)
+            {
+                MessageBox.Show("Завершите настройку серверя для продолжения.");
+                Environment.Exit(0);
+            }
+            SetServer(ServerConnection, ServerLogin, ServerPassword);
+
             try
             {
                 var path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\LibraryApp";
@@ -116,30 +143,26 @@ namespace LibraryApp.win.pages
                     Dictionary<string, string>? load = JsonSerializer.Deserialize<Dictionary<string, string>>(fs);
                     if (load != null)
                     {
-                        ServerLinkTextBox.Text = load["ServerLink"];
-                        ServerNameTextBox.Text = load["ServerName"];
-                        ServerPasswordTextBox.Password = load["ServerPassword"];
                         SaveLoginCheckBox.IsChecked = Convert.ToBoolean(load["RememberLogin"]);
                         LoginTextBox.Text = load["UserLogin"];
-
-                        SetServer(load["ServerLink"], load["ServerName"], load["ServerPassword"]);
                     }
                 }
             }
-            catch { }
+            catch (FileNotFoundException)
+            { }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
 
         }
 
-        private void Server_Button_Click(object sender, RoutedEventArgs e)
-        {
-            settings_page.Visibility = Visibility.Collapsed;
-            SetServer(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
-            SaveStartUpData();
-        }
 
-        private void SetServer(string serverName, string Username, string Password)
+
+
+        private void SetServer(string serverName, string? Username = "", string? Password = "")
         {
-            LibraryCore.SetServer(ServerLinkTextBox.Text, ServerNameTextBox.Text, ServerPasswordTextBox.Password);
+            LibraryCore.SetServer(serverName, Username, Password);
         }
     }
 }
