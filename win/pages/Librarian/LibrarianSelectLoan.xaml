@@ -28,7 +28,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
-            <DataGrid x:Name="BooksTable" ItemsSource="{Binding BookRow}" IsTextSearchEnabled="True" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" RowHeight="100" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" Background="#66F0F0F0" FontSize="18" FontWeight="Bold" SelectionMode="Single">
+            <DataGrid x:Name="BooksTable" ItemsSource="{Binding BookRow}" IsTextSearchEnabled="True" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" RowHeight="100" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" Background="#66F0F0F0" FontSize="18" FontWeight="Bold" SelectionMode="Single" SelectionChanged="TableSelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="0.9*" ElementStyle="{StaticResource CenterStyle}"/>
                     <DataGridTextColumn Header="Автор" Binding="{Binding Author}" Width="0.9*" ElementStyle="{StaticResource CenterStyle}"/>
@@ -88,7 +88,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
                 <Label x:Name="ReaderBoxLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Grid.Row="4" Margin="10"/>
-                <Button x:Name="Give_Book" Grid.Row="5" Content="Вернуть книгу" Margin="5" FontSize="25" FontWeight="SemiBold" Click="Give_Book_Button" FontFamily="Arial" BorderThickness="5"/>
+                <Button x:Name="Give_Book" Grid.Row="5" Content="Вернуть книгу" Margin="5" FontSize="25" FontWeight="SemiBold" Click="Give_Book_Button" FontFamily="Arial" BorderThickness="5" IsEnabled="False"/>
 
             </Grid>
             <Label Content="ВОЗВРАТ КНИГИ" HorizontalAlignment="Center" Foreground="White" FontSize="42" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10"/>

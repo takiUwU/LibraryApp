@@ -85,7 +85,7 @@ namespace LibraryApp
                     throw new Exception("Телефон не может быть пустым!");
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Имя не может быть пустым!");
-                if (!Regex.Match(phone, @"^(\+[0-9]{9})$").Success)
+                if (!Regex.Match(phone, @"^\+\d{9,20}$").Success)
                     throw new Exception("Номер телефона не подходит. Номер телефона надо вводить со знака +.");
                 context.Readers.Add(new Reader() { Phone = phone, Name = name });
                 context.SaveChanges();
@@ -156,6 +156,14 @@ namespace LibraryApp
             context.Entry(loan).Reference("Book").Load();
             context.Entry(loan).Reference("Reader").Load();
             return loan;
+        }
+
+        static public ICollection<Book>? GetBooksByAuthorId(int authorId)
+        {
+            Author? author = context.Authors.Where(a => a.ID == authorId).Include(a => a.Books).FirstOrDefault();
+            if (author == null)
+                return null;
+            return author.Books;
         }
     }
 }

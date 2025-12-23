@@ -33,7 +33,7 @@ namespace LibraryApp.win
 
         private void Exit_MouseClick(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new LibrarianSelectReader() { ReturnMode = false});
+            NavigationService.Navigate(new LibrarianSelectReader(reader.Phone) { ReturnMode = false});
         }
 
 
@@ -101,6 +101,15 @@ namespace LibraryApp.win
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void TableSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (BooksTable.SelectedItem == null)
+                Give_Book.IsEnabled = false;
+            else
+                Give_Book.IsEnabled = true;
+        }
+
 
         private class BookRow : INotifyPropertyChanged
         {

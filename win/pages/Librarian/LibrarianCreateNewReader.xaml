@@ -52,10 +52,10 @@
                         <RowDefinition Height="3*"/>
                     </Grid.RowDefinitions>
                     <Label Content="Новый читатель" FontSize="30" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Label Content="Телефон читателя" FontSize="30" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="1" VerticalAlignment="Center"/>
-                    <TextBox x:Name="PhoneTextBox"  BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="34" VerticalContentAlignment="Center" Grid.Row="2"/>
-                    <Label Content="Имя читателя" FontSize="30" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="3" VerticalAlignment="Center"/>
-                    <TextBox x:Name="NameTextBox" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="34" VerticalContentAlignment="Center" Grid.Row="4"/>
+                    <Label Content="Имя читателя" FontSize="35" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="1" VerticalAlignment="Center"/>
+                    <TextBox x:Name="NameTextBox" BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="34" VerticalContentAlignment="Center" Grid.Row="2"/>
+                    <Label Content="Телефон читателя" FontSize="35" FontWeight="ExtraBold" FontFamily="Arial" Grid.Row="3" VerticalAlignment="Center"/>
+                    <TextBox x:Name="PhoneTextBox"  BorderBrush="Black" BorderThickness="2" FontFamily="Arial" FontSize="34" VerticalContentAlignment="Center" Grid.Row="4"/>
                 </Grid>
                 <Button x:Name="Register_Reader" Grid.Row="3" Content="Добавить" Margin="5" FontSize="35" FontWeight="SemiBold" Click="Reqister_User_Button" FontFamily="Arial" BorderThickness="5"/>
             </Grid>

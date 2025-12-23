@@ -150,6 +150,15 @@ namespace LibraryApp.win.pages
             }
             catch (FileNotFoundException)
             { }
+            catch (JsonException e)
+            {
+                try
+                {
+                    File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\LibraryApp\\enterdata.json");
+                }
+                catch { }
+                MessageBox.Show(e.Message);
+            }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
