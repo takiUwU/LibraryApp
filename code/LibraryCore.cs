@@ -58,6 +58,14 @@ namespace LibraryApp
             return loans;
         }
 
+        static public ICollection<Loan> GetUnreturnedLoansByReader(Reader reader)
+        {
+            if (reader == null)
+                return new List<Loan>();
+            var loans = context.Loans.Where(l => l.Reader == reader).Where(l => l.ReturnDate == null).Include(l => l.Book).ThenInclude(b => b.Author).ToList();
+            return loans;
+        }
+
         static public Book? GetBookByID(int id)
         {
             Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault();
@@ -127,6 +135,27 @@ namespace LibraryApp
             Loan new_loan = new Loan() { ReaderID = reader.ID, BookID = book.ID, BorrowDate = DateTime.Now};
             context.Loans.Add(new_loan);
             context.SaveChanges();
+        }
+
+        static public void ReturnALoan(Loan loan)
+        {
+            if (loan == null) throw new Exception("Долг пустой!");
+            if (loan.ReturnDate != null) throw new Exception("Долг уже возращён!");
+            loan.ReturnDate = DateTime.Now;
+            BookAmount? book_amount = context.BookAmounts.Where(ba => ba.BookID == loan.BookID).FirstOrDefault();
+            if (book_amount == null) throw new Exception("Ошибка при получении числа книг!");
+            book_amount.Amount += 1;
+            context.SaveChanges();
+        }
+
+        static public Loan? GetLoanByID(int id)
+        {
+            Loan? loan = context.Loans.Where(l => l.ID == id).FirstOrDefault();
+            if (loan == null)
+                return null;
+            context.Entry(loan).Reference("Book").Load();
+            context.Entry(loan).Reference("Reader").Load();
+            return loan;
         }
     }
 }

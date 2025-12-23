@@ -48,7 +48,7 @@ namespace LibraryApp.win
 
         private List<BookRow> CreateBookRowTable()
         {
-            List<Loan> loans = LibraryCore.GetLoansByReader(reader).ToList();
+            List<Loan> loans = LibraryCore.GetUnreturnedLoansByReader(reader).ToList();
             List<BookRow> bookRows = new List<BookRow>();
             foreach (var loan in loans)
                 bookRows.Add(new BookRow(loan.ID, loan.Book.Name, loan.Book.Author.Name, loan.Book.Description, loan.Book.ReleaseDate, loan.Book.PageCount, loan.BorrowDate));
@@ -77,18 +77,18 @@ namespace LibraryApp.win
         }
 
 
-        private void BookGive(BookRow book)
+        private void BookGive(BookRow bookRow)
         {
             try
             {
 
-                MessageBoxResult result = MessageBox.Show($"Действительно ли вы хотите вернуть книгу {book.Name} от человека с телефоном {reader.Phone}?", "Вернуть книгу?", MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show($"Действительно ли вы хотите вернуть книгу {bookRow.Name} от человека с телефоном {reader.Phone}?", "Вернуть книгу?", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    Book? added_book = LibraryCore.GetBookByID(book.original_id);
-                    if (added_book == null)
+                    Loan? return_loan = LibraryCore.GetLoanByID(bookRow.original_id);
+                    if (return_loan == null)
                         throw new Exception("Ошибка при возрате книги.");
-                    LibraryCore.CreateALoan(reader, added_book);
+                    LibraryCore.ReturnALoan(return_loan);
                     MessageBox.Show("Книга была успешна возращена!");
                     NavigationService.Navigate(new LibrarianPage());
                 }
@@ -118,7 +118,7 @@ namespace LibraryApp.win
                 this.Description = Description;
                 this.ReleaseDate = ReleaseDate;
                 this.PageCount = PageCount;
-                this.BorrowTime = borrowTime;
+                this.BorrowTime = BorrowTime;
             }
 
             public string? Name
