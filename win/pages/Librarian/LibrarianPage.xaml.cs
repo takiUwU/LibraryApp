@@ -41,7 +41,9 @@ namespace LibraryApp.win.pages
 
         private void Exit_MouseClick(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new StartPage());
+            MessageBoxResult exit = MessageBox.Show("Выйти с аккаунта?", "Выход из аккаунта.", MessageBoxButton.YesNo);
+            if (exit == MessageBoxResult.Yes)
+                NavigationService.Navigate(new StartPage());
         }
     }
 }

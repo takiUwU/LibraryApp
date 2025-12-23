@@ -45,7 +45,7 @@ namespace LibraryApp.win
         private List<BookRow> CreateBookRowTable(string name, string author, DateOnly? date)
         {
             List<BookRow> books = CreateBookRowTable();
-            books = books.Where(b => b.Name!.Contains(name) && b.Author!.Contains(author) && (date == null || b.ReleaseDate == date)).ToList();
+            books = books.Where(b => b.Name!.ToLower().Contains(name.ToLower()) && b.Author!.ToLower().Contains(author.ToLower()) && (date == null || b.ReleaseDate == date)).ToList();
             return books;
         }
 
@@ -61,6 +61,7 @@ namespace LibraryApp.win
 
         private void SearchTextChanged(object sender, TextChangedEventArgs e)
         {
+            Give_Book.IsEnabled = false;
             DateTime datetime;
             DateOnly? date = null;
             if (DateTime.TryParse(DateTextBox.Text, out datetime))

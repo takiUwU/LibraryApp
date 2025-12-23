@@ -66,6 +66,20 @@ namespace LibraryApp
             return loans;
         }
 
+        static public ICollection<Loan> GetExpiredLoansByReader(Reader reader)
+        {
+            if (reader == null)
+                return new List<Loan>();
+            return GetUnreturnedLoansByReader(reader).Where(l => (DateTime.Now - l.BorrowDate).Days > 14).ToList();
+        }
+
+        static public ICollection<Loan> GetReturnedLoansByReader(Reader reader)
+        {
+            if (reader == null)
+                return new List<Loan>();
+            return GetUnreturnedLoansByReader(reader).Where(l => l.ReturnDate != null).ToList();
+        }
+
         static public Book? GetBookByID(int id)
         {
             Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault();
@@ -76,6 +90,62 @@ namespace LibraryApp
             context.Entry(book).Collection("Loans").Load();
             return book;
         }
+
+        static public void DeleteReaderById(int id)
+        {
+            Reader? reader = context.Readers.Where(r => r.ID == id).FirstOrDefault() ?? null;
+            if (reader == null)
+                return;
+            context.Readers.Remove(reader);
+            context.SaveChanges();
+        }
+
+        static public void DeleteUserById(int id)
+        {
+            User? User = context.Users.Where(u => u.ID == id).FirstOrDefault() ?? null;
+            if (User == null)
+                return;
+            context.Users.Remove(User);
+            context.SaveChanges();
+        }
+
+        static public void DeleteLoanById(int id)
+        {
+            Loan? Loan = context.Loans.Where(l => l.ID == id).FirstOrDefault() ?? null;
+            if (Loan == null)
+                return;
+            context.Loans.Remove(Loan);
+            context.SaveChanges();
+        }
+
+        static public void DeleteAuthorById(int id)
+        {
+            Author? author = context.Authors.Where(a => a.ID == id).FirstOrDefault() ?? null;
+            if (author == null)
+                return;
+            context.Authors.Remove(author);
+            context.SaveChanges();
+        }
+
+        static public void DeleteBookById(int id)
+        {
+            Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault() ?? null;
+            if (book == null)
+                return;
+            context.Books.Remove(book);
+            context.SaveChanges();
+        }
+
+        static public Reader? GetReaderByID(int id)
+        {
+            Reader? reader = context.Readers.Where(r => r.ID == id).FirstOrDefault();
+            if (reader == null)
+                return null;
+            context.Entry(reader).Reference("Loans").Load();
+            return reader;
+        }
+
+
 
         static public (bool,string) TryCreateReader(string phone, string name)
         {
@@ -110,10 +180,42 @@ namespace LibraryApp
             return reader;
         }
 
+
         static public ICollection<Book> GetAllAvailableBooks()
         {
             return context.Books.Include(b => b.Amount).Include(b => b.Author).Where(b => ((b.Amount != null)) && (b.Amount.Amount > 0)).ToList(); 
         }
+
+
+        static public ICollection<Author> GetAllAuthors()
+        {
+            return context.Authors.Include(a => a.Books).ToList();
+        }
+
+
+        static public ICollection<User> GetAllUsers()
+        {
+            return context.Users.Include(u => u.UserType).ToList();
+        }
+
+
+        static public ICollection<Book> GetAllBooks()
+        {
+            return context.Books.Include(b => b.Amount).Include(b => b.Author).ToList();
+        }
+
+
+        static public ICollection<Loan> GetAllLoans()
+        {
+            return context.Loans.Include(l => l.Reader).Include(l => l.Book).ThenInclude(b=>b.Author).ToList();
+        }
+
+
+        static public ICollection<Reader> GetAllReaders()
+        {
+            return context.Readers.Include(r=>r.Loans).ToList();
+        }
+
 
         static public bool CanReaderLoanABook(Reader reader)
         {
@@ -123,6 +225,7 @@ namespace LibraryApp
             allowed -= reader.Loans.Where(l => l.ReturnDate != null).Where(l => (l.ReturnDate!.Value - l.BorrowDate).TotalDays > 14).Count();
             return  allowed >= 0;
         }
+
 
         static public void CreateALoan(Reader reader, Book book)
         {
@@ -137,6 +240,7 @@ namespace LibraryApp
             context.SaveChanges();
         }
 
+
         static public void ReturnALoan(Loan loan)
         {
             if (loan == null) throw new Exception("Долг пустой!");
@@ -147,6 +251,7 @@ namespace LibraryApp
             book_amount.Amount += 1;
             context.SaveChanges();
         }
+
 
         static public Loan? GetLoanByID(int id)
         {

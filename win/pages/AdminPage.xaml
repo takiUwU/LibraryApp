@@ -30,7 +30,7 @@
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
             <Label Content="СТРАНИЦА АДМИНИСТРАТОРА" HorizontalAlignment="Center" Foreground="White" FontSize="42" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10"/>
-            <ListBox x:Name="DBSelectList" Grid.Column="1" SelectionChanged="DBSelectionChanged" VerticalContentAlignment="Stretch">
+            <ListBox x:Name="DBSelectList" Grid.Column="1" SelectionChanged="DBSelectionChanged" VerticalContentAlignment="Stretch" FontWeight="Bold" FontSize="24">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -40,131 +40,54 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <DataGrid x:Name="DataTable" Grid.Row="1" AutoGenerateColumns="False" RowHeight="100" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" Background="#66F0F0F0" FontSize="18" FontWeight="Bold" SelectionMode="Single" CanUserAddRows="True" CanUserDeleteRows="True" IsReadOnly="False"/>
+            <DataGrid x:Name="DataBaseTable" Grid.Row="1" AutoGenerateColumns="False" RowHeight="100" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" Background="#66F0F0F0" FontSize="18" FontWeight="Bold" SelectionMode="Single" IsReadOnly="True" SelectionChanged="DataBaseTable_SelectionChanged"/>
             <Grid Grid.Row="1" Grid.Column="1" Margin="10">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="6*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
+                <Grid Margin="2" Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="FirstLabel" Content="" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
+                    <TextBox x:Name="FirstTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial" TextChanged="SearchTextChanged" Visibility="Collapsed"/>
+                </Grid>
+                <Grid Margin="2" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="SecondLabel" Content="" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SecondTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial" TextChanged="SearchTextChanged" Visibility="Collapsed"/>
+                </Grid>
+                <Grid Margin="2" Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="ThirdLabel" Content="" HorizontalAlignment="Stretch" Foreground="White" FontSize="18" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" />
+                    <TextBox x:Name="ThirdTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial" TextChanged="SearchTextChanged" Visibility="Collapsed"/>
+                </Grid>
 
-
-                <!-- КНИГИ ПОИСК -->
-                <Grid x:Name="book_search_buttons" Visibility="Collapsed">
+                <Grid Grid.Row="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Grid Margin="2" Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Название:" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
-                        <TextBox x:Name="BookNameTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial"/>
-                    </Grid>
-                    <Grid Margin="2" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Автор:" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
-                        <TextBox x:Name="BookAuthorTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial"/>
-                    </Grid>
-                    <Grid Margin="2" Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Дата написания:" HorizontalAlignment="Stretch" Foreground="White" FontSize="18" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" />
-                        <DatePickerTextBox  x:Name="BookDateTextBox"  HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial"/>
-                    </Grid>
-
-
-                    <!-- АВТОРЫ ПОИСК -->
-                    <Grid x:Name="author_search_buttons" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid Margin="2" Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="Имя:" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
-                            <TextBox x:Name="AuthorNameTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial"/>
-                        </Grid>
-                    </Grid>
-                    <Grid/>
-
-                    <!-- ЧИТАТЕЛИ ПОИСК -->
-                    <Grid x:Name="reader_search_buttons" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid Margin="2" Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="Имя:" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
-                            <TextBox x:Name="ReaderNameTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial"/>
-                            <Label Content="Имя:" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
-                            <TextBox x:Name="ReaderPhoneTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial"/>
-                        </Grid>
-                    </Grid>
-                    <Grid/>
-
-                    <!-- ЧИТАТЕЛИ ПОИСК -->
-                    <Grid x:Name="Users_search_buttons" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid Margin="2" Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Content="Имя:" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center"/>
-                            <TextBox x:Name="UserNameTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="25" FontWeight="SemiBold" FontFamily="Arial"/>
-                        </Grid>
-                    </Grid>
-                    <Grid/>
-
-
-
-
-                    <!-- КНОПКИ CRUD ОПЕРАЦИЙ -->
-                    <Grid Grid.Row="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Button x:Name="CreateButton" Grid.Row="0" Content="Создать" Margin="5" FontSize="25" FontWeight="SemiBold" Click="CreateButtonClick" FontFamily="Arial" BorderThickness="5"/>
-                        <Button x:Name="EditButton" Grid.Row="1" Content="Изменить" Margin="5" FontSize="25" FontWeight="SemiBold" Click="EditButtonClick" FontFamily="Arial" BorderThickness="5"/>
-                        <Button x:Name="DeleteButton" Grid.Row="2" Content="Удалить" Margin="5" FontSize="25" FontWeight="SemiBold" Click="DeleteButtonClick" FontFamily="Arial" BorderThickness="5"/>
-                    </Grid>
+                    <Button x:Name="CreateButton" Grid.Row="0" Content="Создать" Margin="5" FontSize="25" FontWeight="SemiBold" Click="CreateButtonClick" FontFamily="Arial" BorderThickness="5"/>
+                    <Button x:Name="EditButton" Grid.Row="1" Content="Изменить" Margin="5" FontSize="25" FontWeight="SemiBold" Click="EditButtonClick" FontFamily="Arial" BorderThickness="5"/>
+                    <Button x:Name="DeleteButton" Grid.Row="2" Content="Удалить" Margin="5" FontSize="25" FontWeight="SemiBold" Click="DeleteButtonClick" FontFamily="Arial" BorderThickness="5"/>
                 </Grid>
 
-
-
             </Grid>
-
         </Grid>
+
     </Grid>
 </Page>
