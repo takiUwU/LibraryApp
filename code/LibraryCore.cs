@@ -245,6 +245,7 @@ namespace LibraryApp
             context.SaveChanges();
         }
 
+        
 
         static public void ReturnALoan(Loan loan)
         {
@@ -348,6 +349,23 @@ namespace LibraryApp
             if (Reader != null)
             {
                 context.Entry(Reader).Reload();
+            }
+        }
+
+
+        static public void AddNewLoan(Loan loan)
+        {
+            context.Loans.Add(loan);
+            context.SaveChanges();
+        }
+
+        static public void UpdateLoan(int id, int readerId, int bookId, DateTime newBurrowTime, DateTime? newReturnTime)
+        {
+            context.Loans.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.ReaderID, readerId).SetProperty(t => t.BookID, bookId).SetProperty(t => t.BorrowDate, newBurrowTime).SetProperty(t=>t.ReturnDate,newReturnTime));
+            var loan = context.Loans.Local.FirstOrDefault(t => t.ID == id);
+            if (loan != null)
+            {
+                context.Entry(loan).Reload();
             }
         }
     }

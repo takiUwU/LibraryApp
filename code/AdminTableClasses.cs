@@ -236,14 +236,20 @@ namespace LibraryApp.code
 
     public class LoanRow : INotifyPropertyChanged
     {
+        int original_book_id;
+        int original_reader_id;
         int id;
         string? reader;
         string? book;
         DateTime? burrowTime;
         DateTime? returnTime;
 
+
+
         public LoanRow(Loan loan, Reader reader, Book book)
         {
+            original_book_id = book.ID;
+            original_reader_id = reader.ID;
             Id = loan.ID;
             Reader = reader.Name + " (" + reader.Phone + ")";
             Book = book.Name + " (" + book.Author.Name + ")";

@@ -23,6 +23,9 @@ namespace LibraryApp.win
     {
         public dynamic? result;
         string mode = "";
+
+        List<int>? books_id;
+        List<int>? readers_id;
         public Admin_Edit_Window(string mode, dynamic? target = null)
         {
             InitializeComponent();
@@ -53,8 +56,44 @@ namespace LibraryApp.win
                     }
                     break;
                 case "loans":
-                    
-                    break;
+                    FirstComboBox.Visibility = Visibility.Visible;
+                    SecondComboBox.Visibility = Visibility.Visible;
+                    ThirdDatePicker.Visibility = Visibility.Visible;
+                    FourthDatePicker.Visibility = Visibility.Visible;
+
+                    FirstLabel.Content = "Читатель";
+                    SecondLabel.Content = "Книга";
+                    ThirdLabel.Content = "Дата Взятия";
+                    FourthLabel.Content = "Дата Возрата";
+                    List<string> books = new List<string>();
+                    List<string> readers = new List<string>();
+                    books_id = new List<int>();
+                    readers_id = new List<int>();
+                    foreach (var reader in LibraryCore.GetAllReaders())
+                    {
+                        readers.Add(reader.Name + " (" + reader.Phone + ")");
+                        readers_id.Add(reader.ID);
+                    }
+                    foreach (var book in LibraryCore.GetAllBooks())
+                    {
+                        books.Add(book.Name + " (" + book.Author.Name + ")");
+                        books_id.Add(book.ID);
+                    }
+
+                    FirstComboBox.ItemsSource = readers;
+                    FirstComboBox.SelectedIndex = 0;
+                    SecondComboBox.ItemsSource = books;
+                    SecondComboBox.SelectedIndex = 0;
+
+                    if (target != null)
+                    {
+                        FirstComboBox.SelectedIndex = readers.IndexOf(Convert.ToString(target!.Reader));
+                        SecondComboBox.SelectedIndex = books.IndexOf(Convert.ToString(target!.Book));
+                        ThirdDatePicker.Text = Convert.ToString(target!.BurrowTime);
+                        FourthDatePicker.Text = Convert.ToString(target!.ReturnTime);
+                    }
+
+                        break;
                 case "users":
                     FirstComboBox.Visibility = Visibility.Visible;
                     SecondTextBox.Visibility = Visibility.Visible;
@@ -90,7 +129,7 @@ namespace LibraryApp.win
                     AdminPage.return_values!.AddRange(new List<dynamic> { FirstTextBox.Text, SecondTextBox.Text });
                     break;
                 case "loans":
-
+                    AdminPage.return_values!.AddRange(new List<dynamic> { readers_id![FirstComboBox.SelectedIndex], books_id![SecondComboBox.SelectedIndex], ThirdDatePicker.Text, FourthDatePicker.Text});
                     break;
                 case "users":
                     AdminPage.return_values!.AddRange(new List<dynamic> { FirstComboBox.Text, SecondTextBox.Text, ThirdTextBox.Text});

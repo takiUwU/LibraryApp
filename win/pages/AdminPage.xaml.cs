@@ -93,7 +93,7 @@ namespace LibraryApp.win.pages
                     {
                         LibraryCore.AddNewAuthor(newAuthor);
                     }
-                    catch (Exception) { MessageBox.Show("Произошла ошибка при создании автора."); }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании автора. \n{ex.Message}"); }
                     break;
                 case "readers":
                     try
@@ -103,7 +103,16 @@ namespace LibraryApp.win.pages
                     catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании читателя. \n{ex.Message}"); }
                     break;
                 case "loans":
-
+                    try
+                    {
+                        Loan newloan = new Loan();
+                        newloan.ReaderID = return_values![0];
+                        newloan.BookID = return_values![1];
+                        newloan.BorrowDate = DateTime.Parse(Convert.ToString(return_values![2]));
+                        newloan.ReturnDate = return_values![3] == null || return_values![3] == "" ? null : DateTime.Parse(Convert.ToString(return_values![3]));
+                        LibraryCore.AddNewLoan(newloan);
+                    }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании долга. \n{ex.Message}"); }
                     break;
                 case "users":
                     User newUser = new User();
@@ -113,7 +122,7 @@ namespace LibraryApp.win.pages
                     try { 
                         LibraryCore.AddNewUser(newUser); 
                     }
-                    catch(Exception) { MessageBox.Show("Произошла ошибка при создании пользователя."); }
+                    catch(Exception ex) { MessageBox.Show($"Произошла ошибка при создании пользователя. \n{ex.Message}"); }
                     break;
             }
         }
