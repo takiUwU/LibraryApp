@@ -216,6 +216,11 @@ namespace LibraryApp
             return context.Readers.Include(r=>r.Loans).ToList();
         }
 
+        static public ICollection<UserType> GetAllUserTypes()
+        {
+            return context.UserTypes.ToList();
+        }
+
 
         static public bool CanReaderLoanABook(Reader reader)
         {
@@ -269,6 +274,81 @@ namespace LibraryApp
             if (author == null)
                 return null;
             return author.Books;
+        }
+
+
+        static public User CreateNewUser(string login, string password, string usertype)
+        {
+            var NewUser = new User() { Login = login, UserType = context.UserTypes.Where(ut => ut.Name == usertype).First(), Password = PasswordManager.CreatePasswordHash(password) };
+            return NewUser;
+        }
+
+        static public Author CreateNewUser(string Name)
+        {
+            var NewAuthor = new Author() { Name = Name };
+            return NewAuthor;
+        }
+
+        static public void AddNewUser(User user)
+        {
+            context.Users.Add(user);
+            context.SaveChanges();
+        }
+
+        static public void AddNewAuthor(Author author)
+        {
+            context.Authors.Add(author);
+            context.SaveChanges();
+        }
+
+        static public void UpdateUser(int id, int newRoleId, string newLogin, string newPassword)
+        {
+            context.Users.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t=>t.TypeId,newRoleId).SetProperty(t=> t.Login,newLogin).SetProperty(t=> t.Password, newPassword));
+            var User = context.Users.Local.FirstOrDefault(t => t.ID == id);
+            if (User != null)
+            {
+                context.Entry(User).Reload();
+            }
+        }
+
+        static public void UpdateAuthor(int id, string newName)
+        {
+            context.Authors.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName));
+            var Author = context.Authors.Local.FirstOrDefault(t => t.ID == id);
+            if (Author != null)
+            {
+                context.Entry(Author).Reload();
+            }
+        }
+
+        static public int GetRoleIdByName(string name)
+        {
+            var result = context.UserTypes.Where(ut => ut.Name == name).FirstOrDefault();
+            if (result == null)
+                return -1;
+            return result.ID;
+        }
+
+        static public void AddNewReader(string name, string phone)
+        {
+            if (string.IsNullOrEmpty(phone))
+                throw new Exception("Телефон не может быть пустым!");
+            if (string.IsNullOrEmpty(name))
+                throw new Exception("Имя не может быть пустым!");
+            if (!Regex.Match(phone, @"^\+\d{9,20}$").Success)
+                throw new Exception("Номер телефона не подходит. Номер телефона надо вводить со знака +.");
+            context.Readers.Add(new Reader() { Phone = phone, Name = name });
+            context.SaveChanges();
+        }
+
+        static public void UpdateReader(int id, string newName, string newPhone)
+        {
+            context.Readers.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName).SetProperty(t=>t.Phone, newPhone));
+            var Reader = context.Readers.Local.FirstOrDefault(t => t.ID == id);
+            if (Reader != null)
+            {
+                context.Entry(Reader).Reload();
+            }
         }
     }
 }

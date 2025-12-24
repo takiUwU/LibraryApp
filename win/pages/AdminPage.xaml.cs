@@ -17,11 +17,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LibraryApp.win.pages
 {
     public partial class AdminPage : Page
     {
+        static public List<dynamic>? return_values = null;
+
         public Dictionary<string,string> Databases = new Dictionary<string, string>() 
         { 
             { "Книги", "book" }, 
@@ -33,6 +36,7 @@ namespace LibraryApp.win.pages
         public AdminPage()
         {
             InitializeComponent();
+            return_values = null;
             DBSelectList.ItemsSource = Databases;
             EditButton.IsEnabled = false;
             DeleteButton.IsEnabled = false;
@@ -43,12 +47,117 @@ namespace LibraryApp.win.pages
         {
             dynamic Pair = DBSelectList.SelectedItem;
             var key = Pair.Value;
-            
+
+            return_values = new List<dynamic>();
+            CreateWindowCreate(key, null);
+            if (return_values.Count == 0)
+                return_values = null;
+            if (return_values != null)
+            {
+                CreateElement(return_values, key);
+                UpdateTable();
+            }
+            return_values = null;
+
         }
 
         private void EditButtonClick(object sender, RoutedEventArgs e)
         {
+            dynamic Pair = DBSelectList.SelectedItem;
+            var key = Pair.Value;
+            dynamic target = DataBaseTable.SelectedItem;
 
+            return_values = new List<dynamic>();
+            CreateWindowCreate(key, target);
+            if (return_values.Count == 0)
+                return_values = null;
+            if (return_values != null)
+            {
+                EditElement(key, target.Id);
+            }
+            UpdateTable();
+            return_values = null;
+        }
+
+        private void CreateElement(dynamic value, string key)
+        {
+            switch (key)
+            {
+                case "book":
+
+                    break;
+                case "author":
+                    Author newAuthor = new Author();
+                    newAuthor.Name = return_values![0];
+                    try
+                    {
+                        LibraryCore.AddNewAuthor(newAuthor);
+                    }
+                    catch (Exception) { MessageBox.Show("Произошла ошибка при создании автора."); }
+                    break;
+                case "readers":
+                    try
+                    {
+                        LibraryCore.AddNewReader(return_values![0], return_values[1]);
+                    }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании читателя. \n{ex.Message}"); }
+                    break;
+                case "loans":
+
+                    break;
+                case "users":
+                    User newUser = new User();
+                    newUser.TypeId = LibraryCore.GetRoleIdByName(return_values![0]);
+                    newUser.Login = return_values![1];
+                    newUser.Password = return_values![2];
+                    try { 
+                        LibraryCore.AddNewUser(newUser); 
+                    }
+                    catch(Exception) { MessageBox.Show("Произошла ошибка при создании пользователя."); }
+                    break;
+            }
+        }
+
+        private void EditElement(string key, int id)
+        {
+            switch (key)
+            {
+                case "book":
+
+                    break;
+                case "author":
+                    try
+                    {
+                        LibraryCore.UpdateAuthor(id, return_values![0]);
+                    }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании пользователя. \n{ex}"); }
+                    break;
+                case "readers":
+                    try
+                    {
+                        LibraryCore.UpdateReader(id, return_values![0], return_values[1]);
+                    }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании читателя. \n{ex}"); }
+                    break;
+                case "loans":
+
+                    break;
+                case "users":
+                    try
+                    {
+                        LibraryCore.UpdateUser(id, LibraryCore.GetRoleIdByName(return_values![0]), return_values![1], return_values![2]);
+                    }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании пользователя. \n{ex}"); }
+                    break;
+            }
+        }
+
+        private void CreateWindowCreate(string key, dynamic? target)
+        {
+            
+            Admin_Edit_Window? edit = null;
+            edit = new Admin_Edit_Window(key, target);
+            edit.ShowDialog();
         }
 
         private void DeleteButtonClick(object sender, RoutedEventArgs e)
