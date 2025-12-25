@@ -322,6 +322,8 @@ namespace LibraryApp
             }
         }
 
+
+
         static public int GetRoleIdByName(string name)
         {
             var result = context.UserTypes.Where(ut => ut.Name == name).FirstOrDefault();
@@ -367,6 +369,26 @@ namespace LibraryApp
             {
                 context.Entry(loan).Reload();
             }
+        }
+
+
+        static public void AddNewBook(Book book, int amount)
+        {
+            context.Books.Add(book);
+            context.BookAmounts.Add(new BookAmount() { BookID = book.ID, Amount = amount, Book = book});
+            context.SaveChanges();
+        }
+
+        static public void UpdateBook(int id, string newName, int newAuthorID, string newDescription, DateOnly newDate, int newPageCount, int newAmount)
+        {
+            context.Books.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName).SetProperty(t => t.Description, newDescription).SetProperty(t => t.AuthorID, newAuthorID).SetProperty(t => t.ReleaseDate, newDate).SetProperty(t=>t.PageCount,newPageCount));
+            context.BookAmounts.Where(t => t.BookID == id).ExecuteUpdate(s => s.SetProperty(t => t.Amount, newAmount));
+            var book = context.Books.Local.FirstOrDefault(t => t.ID == id);
+            var amount = context.BookAmounts.Local.FirstOrDefault(t => t.BookID == id);
+            if (book != null)
+                context.Entry(book).Reload();
+            if (amount != null)
+                context.Entry(amount).Reload();
         }
     }
 }

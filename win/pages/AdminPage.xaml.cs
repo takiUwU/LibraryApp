@@ -45,6 +45,11 @@ namespace LibraryApp.win.pages
 
         private void CreateButtonClick(object sender, RoutedEventArgs e)
         {
+            try
+            {
+
+            EditButton.IsEnabled = false;
+            DeleteButton.IsEnabled = false;
             dynamic Pair = DBSelectList.SelectedItem;
             var key = Pair.Value;
 
@@ -58,11 +63,26 @@ namespace LibraryApp.win.pages
                 UpdateTable();
             }
             return_values = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при открытии окна. \n\nСкорее всего была проблема с данными. \n\n{ex}");
+            }
+            finally
+            {
+                UpdateTable();
+                return_values = null;
+            }
 
         }
 
         private void EditButtonClick(object sender, RoutedEventArgs e)
         {
+            try
+            {
+
+            EditButton.IsEnabled = false;
+            DeleteButton.IsEnabled = false;
             dynamic Pair = DBSelectList.SelectedItem;
             var key = Pair.Value;
             dynamic target = DataBaseTable.SelectedItem;
@@ -75,8 +95,16 @@ namespace LibraryApp.win.pages
             {
                 EditElement(key, target.Id);
             }
-            UpdateTable();
-            return_values = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при открытии окна. \n\nСкорее всего была проблема с данными. \n\n{ex}");
+            }
+            finally
+            {
+                UpdateTable();
+                return_values = null;
+            }
         }
 
         private void CreateElement(dynamic value, string key)
@@ -84,11 +112,29 @@ namespace LibraryApp.win.pages
             switch (key)
             {
                 case "book":
-
+                    try
+                    {
+                        Book newBook = new Book();
+                        newBook.Name = return_values![0];
+                        newBook.AuthorID = Convert.ToInt32(return_values![1]);
+                        newBook.Description = return_values![2];
+                        newBook.ReleaseDate = DateOnly.Parse(Convert.ToString(return_values![3]));
+                        newBook.PageCount = Convert.ToInt32(return_values![4]);
+                        if (string.IsNullOrEmpty(newBook.Name))
+                            throw new Exception("Название книги было пустым.");
+                        int count = 0;
+                        if (!int.TryParse(return_values![5], out count))
+                            throw new Exception("Число книг было неправильным");
+                        LibraryCore.AddNewBook(newBook, count);
+                    }
+                    catch (FormatException) { MessageBox.Show($"Произошла ошибка при создании книги. \nВ поля для чисел были введены другие значения."); }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании книги. \n{ex.Message}"); }
                     break;
                 case "author":
                     Author newAuthor = new Author();
                     newAuthor.Name = return_values![0];
+                    if (string.IsNullOrEmpty(newAuthor.Name))
+                        throw new Exception("Имя автора было пустым.");
                     try
                     {
                         LibraryCore.AddNewAuthor(newAuthor);
@@ -98,6 +144,8 @@ namespace LibraryApp.win.pages
                 case "readers":
                     try
                     {
+                        if (string.IsNullOrEmpty(return_values![0]) || string.IsNullOrEmpty(return_values![1]))
+                            throw new Exception("Не все поля были заполнены.");
                         LibraryCore.AddNewReader(return_values![0], return_values[1]);
                     }
                     catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании читателя. \n{ex.Message}"); }
@@ -132,11 +180,16 @@ namespace LibraryApp.win.pages
             switch (key)
             {
                 case "book":
-
+                    int count = 0;
+                    if (!int.TryParse(return_values![5], out count))
+                        throw new Exception("Число книг было неправильным");
+                    LibraryCore.UpdateBook(id, (string)return_values![0], (int)return_values![1], (string)return_values[2], DateOnly.Parse(return_values[3]), Convert.ToInt32(return_values![4]), count);
                     break;
                 case "author":
                     try
                     {
+                        if (string.IsNullOrEmpty(return_values![0]))
+                            throw new Exception("Имя автора пустое");
                         LibraryCore.UpdateAuthor(id, return_values![0]);
                     }
                     catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании пользователя. \n{ex}"); }
@@ -144,12 +197,18 @@ namespace LibraryApp.win.pages
                 case "readers":
                     try
                     {
+                        if (string.IsNullOrEmpty(return_values![0]) || string.IsNullOrEmpty(return_values![1]))
+                            throw new Exception("Не все поля были заполнены.");
                         LibraryCore.UpdateReader(id, return_values![0], return_values[1]);
                     }
                     catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании читателя. \n{ex}"); }
                     break;
                 case "loans":
-
+                    try
+                    {
+                        LibraryCore.UpdateLoan(id, return_values![0], return_values[1], DateTime.Parse(return_values[2]), return_values![3] == null || return_values![3] == "" ? null : DateTime.Parse(Convert.ToString(return_values![3])));
+                    }
+                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании читателя. \n{ex}"); }
                     break;
                 case "users":
                     try
@@ -418,6 +477,8 @@ namespace LibraryApp.win.pages
 
         private void DataBaseTable_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (DataBaseTable.SelectedIndex == -1)
+                return;
             EditButton.IsEnabled = true;
             DeleteButton.IsEnabled = true;
         }

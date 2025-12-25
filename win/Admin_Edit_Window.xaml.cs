@@ -26,6 +26,7 @@ namespace LibraryApp.win
 
         List<int>? books_id;
         List<int>? readers_id;
+        List<int>? authors_id;
         public Admin_Edit_Window(string mode, dynamic? target = null)
         {
             InitializeComponent();
@@ -36,7 +37,36 @@ namespace LibraryApp.win
             switch (this.mode)
             {
                 case "book":
-                    
+                    FirstLabel.Content = "Имя";
+                    SecondLabel.Content = "Автор";
+                    ThirdLabel.Content = "Описание";
+                    FourthLabel.Content = "Дата выхода";
+                    FifthLabel.Content = "Страниц";
+                    SixthLabel.Content = "Количество";
+                    FirstTextBox.Visibility = Visibility.Visible;
+                    SecondComboBox.Visibility = Visibility.Visible;
+                    ThirdTextBox.Visibility = Visibility.Visible;
+                    FourthDatePicker.Visibility = Visibility.Visible;
+                    FifthTextBox.Visibility = Visibility.Visible;
+                    SixthTextBox.Visibility = Visibility.Visible;
+                    authors_id = new List<int>();
+                    List<string> authors = new List<string>();
+                    foreach (var author in LibraryCore.GetAllAuthors())
+                    {
+                        authors.Add(author.Name);
+                        authors_id.Add(author.ID);
+                    }
+                    SecondComboBox.ItemsSource = authors;
+                    SecondComboBox.SelectedIndex = 0;
+                    if (target != null)
+                    {
+                        FirstTextBox.Text = target.Name;
+                        SecondComboBox.SelectedIndex = authors.IndexOf(Convert.ToString(target!.Author));
+                        ThirdTextBox.Text = target.Description;
+                        FourthDatePicker.Text = Convert.ToString(target.ReleaseDate);
+                        FifthTextBox.Text = Convert.ToString(target.PageCount);
+                        SixthTextBox.Text = Convert.ToString(target.Count);
+                    }
                     break;
                 case "author":
                     FirstLabel.Content = "Имя";
@@ -120,7 +150,7 @@ namespace LibraryApp.win
             switch (mode)
             {
                 case "book":
-
+                    AdminPage.return_values!.AddRange(new List<dynamic> { FirstTextBox.Text, authors_id![SecondComboBox.SelectedIndex], ThirdTextBox.Text, FourthDatePicker.Text, FifthTextBox.Text, SixthTextBox.Text});
                     break;
                 case "author":
                     AdminPage.return_values!.AddRange(new List<dynamic> { FirstTextBox.Text});

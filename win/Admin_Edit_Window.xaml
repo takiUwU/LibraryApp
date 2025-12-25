@@ -37,12 +37,14 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
                 <Label x:Name="FirstLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10" Grid.Row="1"/>
                 <Label x:Name="SecondLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10" Grid.Row="2"/>
                 <Label x:Name="ThirdLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10" Grid.Row="3"/>
                 <Label x:Name="FourthLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10" Grid.Row="4"/>
                 <Label x:Name="FifthLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10" Grid.Row="5"/>
+                <Label x:Name="SixthLabel" Content="" HorizontalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" VerticalAlignment="Center" Margin="10" Grid.Row="6"/>
             
 
                 <TextBox x:Name="FirstTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" Margin="0,10" Grid.Row="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" Visibility="Collapsed"/>
@@ -50,6 +52,7 @@
                 <TextBox x:Name="ThirdTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" Margin="0,10" Grid.Row="3" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" Visibility="Collapsed"/>
                 <TextBox x:Name="FourthTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" Margin="0,10" Grid.Row="4" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" Visibility="Collapsed"/>
                 <TextBox x:Name="FifthTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" Margin="0,10" Grid.Row="5" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial"  Visibility="Collapsed"/>
+                <TextBox x:Name="SixthTextBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" Margin="0,10" Grid.Row="6" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial"  Visibility="Collapsed"/>
 
 
                 <ComboBox x:Name="FirstComboBox" Text="" HorizontalAlignment="Stretch" Grid.Column="1" Margin="0,10" Grid.Row="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" FontWeight="SemiBold" FontFamily="Arial" Visibility="Collapsed" />
