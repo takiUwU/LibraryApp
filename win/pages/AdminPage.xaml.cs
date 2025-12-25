@@ -30,7 +30,7 @@ namespace LibraryApp.win.pages
             { "Книги", "book" }, 
             { "Авторы", "author" }, 
             { "Читатели", "readers" },
-            { "Долги", "loans" },
+            { "История", "loans" },
             { "Пользователи", "users" },
         };
         public AdminPage()
@@ -64,9 +64,9 @@ namespace LibraryApp.win.pages
             }
             return_values = null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Произошла ошибка при открытии окна. \n\nСкорее всего была проблема с данными. \n\n{ex}");
+                MessageBox.Show($"Произошла ошибка при открытии окна. \n\nСкорее всего была проблема с данными.");
             }
             finally
             {
@@ -96,9 +96,9 @@ namespace LibraryApp.win.pages
                 EditElement(key, target.Id);
             }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Произошла ошибка при открытии окна. \n\nСкорее всего была проблема с данными. \n\n{ex}");
+                MessageBox.Show($"Произошла ошибка при открытии окна. \n\nСкорее всего была проблема с данными.");
             }
             finally
             {
@@ -120,15 +120,13 @@ namespace LibraryApp.win.pages
                         newBook.Description = return_values![2];
                         newBook.ReleaseDate = DateOnly.Parse(Convert.ToString(return_values![3]));
                         newBook.PageCount = Convert.ToInt32(return_values![4]);
+                        newBook.Amount = Convert.ToInt32(return_values![5]);
                         if (string.IsNullOrEmpty(newBook.Name))
                             throw new Exception("Название книги было пустым.");
-                        int count = 0;
-                        if (!int.TryParse(return_values![5], out count))
-                            throw new Exception("Число книг было неправильным");
-                        LibraryCore.AddNewBook(newBook, count);
+                        LibraryCore.AddNewBook(newBook);
                     }
                     catch (FormatException) { MessageBox.Show($"Произошла ошибка при создании книги. \nВ поля для чисел были введены другие значения."); }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании книги. \n{ex.Message}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при создании книги. "); }
                     break;
                 case "author":
                     Author newAuthor = new Author();
@@ -139,7 +137,7 @@ namespace LibraryApp.win.pages
                     {
                         LibraryCore.AddNewAuthor(newAuthor);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании автора. \n{ex.Message}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при создании автора."); }
                     break;
                 case "readers":
                     try
@@ -148,7 +146,7 @@ namespace LibraryApp.win.pages
                             throw new Exception("Не все поля были заполнены.");
                         LibraryCore.AddNewReader(return_values![0], return_values[1]);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании читателя. \n{ex.Message}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при создании читателя."); }
                     break;
                 case "loans":
                     try
@@ -160,7 +158,7 @@ namespace LibraryApp.win.pages
                         newloan.ReturnDate = return_values![3] == null || return_values![3] == "" ? null : DateTime.Parse(Convert.ToString(return_values![3]));
                         LibraryCore.AddNewLoan(newloan);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при создании долга. \n{ex.Message}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при создании долга."); }
                     break;
                 case "users":
                     User newUser = new User();
@@ -170,7 +168,7 @@ namespace LibraryApp.win.pages
                     try { 
                         LibraryCore.AddNewUser(newUser); 
                     }
-                    catch(Exception ex) { MessageBox.Show($"Произошла ошибка при создании пользователя. \n{ex.Message}"); }
+                    catch(Exception) { MessageBox.Show($"Произошла ошибка при создании пользователя."); }
                     break;
             }
         }
@@ -183,6 +181,8 @@ namespace LibraryApp.win.pages
                     int count = 0;
                     if (!int.TryParse(return_values![5], out count))
                         throw new Exception("Число книг было неправильным");
+                    if (count < 0)
+                        throw new Exception("Число книг было неправильным");
                     LibraryCore.UpdateBook(id, (string)return_values![0], (int)return_values![1], (string)return_values[2], DateOnly.Parse(return_values[3]), Convert.ToInt32(return_values![4]), count);
                     break;
                 case "author":
@@ -192,7 +192,7 @@ namespace LibraryApp.win.pages
                             throw new Exception("Имя автора пустое");
                         LibraryCore.UpdateAuthor(id, return_values![0]);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании пользователя. \n{ex}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при редактировании пользователя."); }
                     break;
                 case "readers":
                     try
@@ -201,21 +201,21 @@ namespace LibraryApp.win.pages
                             throw new Exception("Не все поля были заполнены.");
                         LibraryCore.UpdateReader(id, return_values![0], return_values[1]);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании читателя. \n{ex}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при редактировании читателя."); }
                     break;
                 case "loans":
                     try
                     {
-                        LibraryCore.UpdateLoan(id, return_values![0], return_values[1], DateTime.Parse(return_values[2]), return_values![3] == null || return_values![3] == "" ? null : DateTime.Parse(Convert.ToString(return_values![3])));
+                        LibraryCore.UpdateLoan(id, return_values![0], return_values[1], DateTime.Parse(return_values[2]), return_values![3] == null || return_values![3] == "" ? null : DateTime.Parse(Convert.ToString(return_values![3])), return_values![4] == null || return_values![4] == "" ? null : Convert.ToInt32(return_values[4]));
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании читателя. \n{ex}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при редактировании читателя."); }
                     break;
                 case "users":
                     try
                     {
                         LibraryCore.UpdateUser(id, LibraryCore.GetRoleIdByName(return_values![0]), return_values![1], return_values![2]);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Произошла ошибка при редактировании пользователя. \n{ex}"); }
+                    catch (Exception) { MessageBox.Show($"Произошла ошибка при редактировании пользователя."); }
                     break;
             }
         }
@@ -261,13 +261,13 @@ namespace LibraryApp.win.pages
 
                 
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
-                MessageBox.Show($"Произошла ошибка при удалении. Скорее всего у объекта есть связи, не дающии удалить. \n\n\n{ex.Message}");
+                MessageBox.Show($"Произошла ошибка при удалении. Скорее всего у объекта есть связи, не дающии удалить.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Произошла ошибка при удалении. {ex}");
+                MessageBox.Show($"Произошла ошибка при удалении.");
             }
             finally
             {
@@ -349,6 +349,7 @@ namespace LibraryApp.win.pages
                     DataBaseTable.Columns.Add(DataColumnCreate("Книга", "Book"));
                     DataBaseTable.Columns.Add(DataColumnCreate("Время взятия", "BurrowTime"));
                     DataBaseTable.Columns.Add(DataColumnCreate("Время Возрата", "ReturnTime"));
+                    DataBaseTable.Columns.Add(DataColumnCreate("Пользователь", "UserId"));
                     DataBaseTable.ItemsSource = GetLoanRows(FirstTextBox.Text, SecondTextBox.Text);
                     break;
                 case "users":
@@ -439,7 +440,7 @@ namespace LibraryApp.win.pages
                 books = books.Where(b => b.ReleaseDate.ToShortDateString().Contains(Date)).ToList();
             List<BookRowsecond> booksrows = new List<BookRowsecond>();
             foreach (var book in books)
-                booksrows.Add(new BookRowsecond(book.ID,book.Name,book.Author.Name,book.Description,book.ReleaseDate,book.PageCount,(book.Amount != null ? book.Amount.Amount : 0 )));
+                booksrows.Add(new BookRowsecond(book.ID,book.Name,book.Author.Name,book.Description,book.ReleaseDate,book.PageCount,book.Amount ));
             return booksrows;
         }
 
@@ -452,7 +453,7 @@ namespace LibraryApp.win.pages
                 loans = loans.Where(l => (l.Book.Name + " " + l.Book.Author.Name).ToLower().Contains(Book.ToLower())).ToList();
             List<LoanRow> booksrows = new List<LoanRow>();
             foreach (var loan in loans)
-                booksrows.Add(new LoanRow(loan,loan.Reader,loan.Book));
+                booksrows.Add(new LoanRow(loan,loan.Reader,loan.Book,loan.UserID));
             return booksrows;
         }
 

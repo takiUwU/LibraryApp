@@ -243,10 +243,11 @@ namespace LibraryApp.code
         string? book;
         DateTime? burrowTime;
         DateTime? returnTime;
+        int? userId;
 
 
 
-        public LoanRow(Loan loan, Reader reader, Book book)
+        public LoanRow(Loan loan, Reader reader, Book book, int? user_id)
         {
             original_book_id = book.ID;
             original_reader_id = reader.ID;
@@ -255,6 +256,7 @@ namespace LibraryApp.code
             Book = book.Name + " (" + book.Author.Name + ")";
             BurrowTime = loan.BorrowDate;
             ReturnTime = loan.ReturnDate;
+            UserId = user_id;
         }
 
         public int Id
@@ -285,6 +287,13 @@ namespace LibraryApp.code
         {
             get => returnTime;
             set { returnTime = value; OnPropertyChanged(nameof(returnTime)); }
+        }
+
+
+        public int? UserId
+        {
+            get => userId;
+            set { userId = value; OnPropertyChanged(nameof(userId)); }
         }
 
 

@@ -14,10 +14,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace LibraryApp.win.MainFrame
+namespace LibraryApp.win
 {
     public partial class MainFrame : Window
     {
+        public static int CurrentUserId = 0;
         public MainFrame()
         {
             InitializeComponent();

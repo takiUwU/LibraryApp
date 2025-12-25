@@ -54,7 +54,7 @@ namespace LibraryApp.win
             List<Book> books = LibraryCore.GetAllAvailableBooks().ToList();
             List<BookRow> bookRows = new List<BookRow>();
             foreach (var book in books)
-                bookRows.Add(new BookRow(book.ID,book.Name,book.Author.Name,book.Description,book.ReleaseDate,book.PageCount, book.Amount!.Amount));
+                bookRows.Add(new BookRow(book.ID,book.Name,book.Author.Name,book.Description,book.ReleaseDate,book.PageCount, book.Amount));
             return bookRows;
         }
 
@@ -92,7 +92,7 @@ namespace LibraryApp.win
                     Book? added_book = LibraryCore.GetBookByID(book.original_id);
                     if (added_book == null)
                         throw new Exception("Ошибка при получении книги.");
-                    LibraryCore.CreateALoan(reader, added_book);
+                    LibraryCore.CreateALoan(reader, added_book, MainFrame.CurrentUserId);
                     MessageBox.Show("Книга была успешна отдана в долг!");
                     NavigationService.Navigate(new LibrarianPage());
                 }

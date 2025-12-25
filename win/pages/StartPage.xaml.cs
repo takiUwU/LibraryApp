@@ -30,6 +30,7 @@ namespace LibraryApp.win.pages
         {
             InitializeComponent();
             LoadStartUpData();
+            MainFrame.CurrentUserId = 0;
         }
 
         private async void Login_Button_Click(object sender, RoutedEventArgs e)
@@ -65,6 +66,7 @@ namespace LibraryApp.win.pages
                                 NavigationService.Navigate(new AdminPage());
                                 break;
                             case "Librarian":
+                                MainFrame.CurrentUserId = user.ID;
                                 NavigationService.Navigate(new LibrarianPage());
                                 break;
                             default:
@@ -111,9 +113,8 @@ namespace LibraryApp.win.pages
                     await JsonSerializer.SerializeAsync<Dictionary<string, string>>(fs, save);
                 }
             }
-            catch (Exception e)
+            catch (Exception )
             {
-                MessageBox.Show(e.Message);
             }
         }
 
@@ -150,18 +151,17 @@ namespace LibraryApp.win.pages
             }
             catch (FileNotFoundException)
             { }
-            catch (JsonException e)
+            catch (JsonException)
             {
                 try
                 {
                     File.Delete($"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\LibraryApp\\enterdata.json");
                 }
                 catch { }
-                MessageBox.Show(e.Message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                MessageBox.Show(e.Message);
+               
             }
 
         }

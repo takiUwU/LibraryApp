@@ -41,7 +41,7 @@ namespace LibraryApp
 
         static public (User?, string) EnteredUserIsCorrect(string Login, string password)
         {
-            User? user = context.Users.FirstOrDefault(u => u.Login == Login);
+            User? user = context.Users.Where(t=>t.IsActive).FirstOrDefault(u => u.Login == Login);
             if (user == null)
                 return (null, "Логин или пароль введены неправильно.");
             if (!PasswordManager.CheckPasswordHash(password, user.Password))
@@ -54,7 +54,7 @@ namespace LibraryApp
         {
             if (reader == null)
                 return new List<Loan>();
-            var loans = context.Loans.Where(l => l.Reader == reader).Include(l => l.Book).ThenInclude(b => b.Author).ToList();
+            var loans = context.Loans.Where(t => t.IsActive).Where(l => l.Reader == reader).Include(l => l.Book).ThenInclude(b => b.Author).ToList();
             return loans;
         }
 
@@ -62,7 +62,7 @@ namespace LibraryApp
         {
             if (reader == null)
                 return new List<Loan>();
-            var loans = context.Loans.Where(l => l.Reader == reader).Where(l => l.ReturnDate == null).Include(l => l.Book).ThenInclude(b => b.Author).ToList();
+            var loans = context.Loans.Where(t => t.IsActive).Where(l => l.Reader == reader).Where(l => l.ReturnDate == null).Include(l => l.Book).ThenInclude(b => b.Author).ToList();
             return loans;
         }
 
@@ -82,39 +82,38 @@ namespace LibraryApp
 
         static public Book? GetBookByID(int id)
         {
-            Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault();
+            Book? book = context.Books.Where(t => t.IsActive).Where(b => b.ID == id).FirstOrDefault();
             if (book == null)
                 return null;
             context.Entry(book).Reference("Author").Load();
-            context.Entry(book).Reference("Amount").Load();
             context.Entry(book).Collection("Loans").Load();
             return book;
         }
 
         static public void DeleteReaderById(int id)
         {
-            Reader? reader = context.Readers.Where(r => r.ID == id).FirstOrDefault() ?? null;
+            Reader? reader = context.Readers.Where(t => t.IsActive).Where(r => r.ID == id).FirstOrDefault() ?? null;
             if (reader == null)
                 return;
-            context.Readers.Remove(reader);
+            reader.IsActive = false;
             context.SaveChanges();
         }
 
         static public void DeleteUserById(int id)
         {
-            User? User = context.Users.Where(u => u.ID == id).FirstOrDefault() ?? null;
+            User? User = context.Users.Where(t => t.IsActive).Where(u => u.ID == id).FirstOrDefault() ?? null;
             if (User == null)
                 return;
-            context.Users.Remove(User);
+            User.IsActive = false;
             context.SaveChanges();
         }
 
         static public void DeleteLoanById(int id)
         {
-            Loan? Loan = context.Loans.Where(l => l.ID == id).FirstOrDefault() ?? null;
+            Loan? Loan = context.Loans.Where(t => t.IsActive).Where(l => l.ID == id).FirstOrDefault() ?? null;
             if (Loan == null)
                 return;
-            context.Loans.Remove(Loan);
+            Loan.IsActive = false;
             context.SaveChanges();
         }
 
@@ -123,7 +122,7 @@ namespace LibraryApp
             Author? author = context.Authors.Where(a => a.ID == id).FirstOrDefault() ?? null;
             if (author == null)
                 return;
-            context.Authors.Remove(author);
+            author.IsActive = false;
             context.SaveChanges();
         }
 
@@ -132,13 +131,13 @@ namespace LibraryApp
             Book? book = context.Books.Where(b => b.ID == id).FirstOrDefault() ?? null;
             if (book == null)
                 return;
-            context.Books.Remove(book);
+            book.IsActive = false;
             context.SaveChanges();
         }
 
         static public Reader? GetReaderByID(int id)
         {
-            Reader? reader = context.Readers.Where(r => r.ID == id).FirstOrDefault();
+            Reader? reader = context.Readers.Where(t => t.IsActive).Where(r => r.ID == id).FirstOrDefault();
             if (reader == null)
                 return null;
             context.Entry(reader).Reference("Loans").Load();
@@ -173,7 +172,7 @@ namespace LibraryApp
 
         static public Reader? FindReaderByPhone(string phone)
         {
-            Reader? reader = context.Readers.Where(r => r.Phone == phone).Include(r => r.Loans).ThenInclude(l => l.Book).FirstOrDefault();
+            Reader? reader = context.Readers.Where(t => t.IsActive).Where(r => r.Phone == phone).Include(r => r.Loans).ThenInclude(l => l.Book).FirstOrDefault();
             if (reader == null)
                 return null;
             
@@ -183,37 +182,37 @@ namespace LibraryApp
 
         static public ICollection<Book> GetAllAvailableBooks()
         {
-            return context.Books.Include(b => b.Amount).Include(b => b.Author).Where(b => ((b.Amount != null)) && (b.Amount.Amount > 0)).ToList(); 
+            return context.Books.Where(b=>b.IsActive).Include(b => b.Author).Where(b => b.Amount > 0).ToList(); 
         }
 
 
         static public ICollection<Author> GetAllAuthors()
         {
-            return context.Authors.Include(a => a.Books).ToList();
+            return context.Authors.Where(t => t.IsActive).Include(a => a.Books).ToList();
         }
 
 
         static public ICollection<User> GetAllUsers()
         {
-            return context.Users.Include(u => u.UserType).ToList();
+            return context.Users.Where(t => t.IsActive).Include(u => u.UserType).ToList();
         }
 
 
         static public ICollection<Book> GetAllBooks()
         {
-            return context.Books.Include(b => b.Amount).Include(b => b.Author).ToList();
+            return context.Books.Where(t => t.IsActive).Include(b => b.Author).ToList();
         }
 
 
         static public ICollection<Loan> GetAllLoans()
         {
-            return context.Loans.Include(l => l.Reader).Include(l => l.Book).ThenInclude(b=>b.Author).ToList();
+            return context.Loans.Where(t => t.IsActive).Include(l => l.Reader).Include(l => l.Book).ThenInclude(b=>b.Author).ToList();
         }
 
 
         static public ICollection<Reader> GetAllReaders()
         {
-            return context.Readers.Include(r=>r.Loans).ToList();
+            return context.Readers.Where(t => t.IsActive).Include(r=>r.Loans).ToList();
         }
 
         static public ICollection<UserType> GetAllUserTypes()
@@ -226,42 +225,48 @@ namespace LibraryApp
         {
             context.Entry(reader).Collection("Loans").Load();
             int allowed = 5;
-            allowed -= reader.Loans.Where(l => l.ReturnDate == null).Count();
-            allowed -= reader.Loans.Where(l => l.ReturnDate != null).Where(l => (l.ReturnDate!.Value - l.BorrowDate).TotalDays > 14).Count();
+            allowed -= reader.Loans.Where(t => t.IsActive).Where(l => l.ReturnDate == null).Count();
+            allowed -= reader.Loans.Where(t => t.IsActive).Where(l => l.ReturnDate != null).Where(l => (l.ReturnDate!.Value - l.BorrowDate).TotalDays > 14).Count();
             return  allowed >= 0;
         }
 
 
         static public void CreateALoan(Reader reader, Book book)
         {
-            BookAmount? book_amount = context.BookAmounts.Where(ba => ba.BookID == book.ID).FirstOrDefault();
-            if (book_amount == null)
-                throw new Exception("Количество книг не задано.");
-            if (book_amount.Amount <= 0)
+            if (book.Amount <= 0)
                 throw new Exception("Книг не достаточно");
-            book_amount.Amount -= 1;
+            book.Amount -= 1;
             Loan new_loan = new Loan() { ReaderID = reader.ID, BookID = book.ID, BorrowDate = DateTime.Now};
             context.Loans.Add(new_loan);
             context.SaveChanges();
         }
 
-        
+        static public void CreateALoan(Reader reader, Book book, int User_id)
+        {
+            if (book.Amount <= 0)
+                throw new Exception("Книг не достаточно");
+            book.Amount -= 1;
+            Loan new_loan = new Loan() { ReaderID = reader.ID, BookID = book.ID, BorrowDate = DateTime.Now, UserID = User_id };
+            context.Loans.Add(new_loan);
+            context.SaveChanges();
+        }
+
+
 
         static public void ReturnALoan(Loan loan)
         {
             if (loan == null) throw new Exception("Долг пустой!");
             if (loan.ReturnDate != null) throw new Exception("Долг уже возращён!");
             loan.ReturnDate = DateTime.Now;
-            BookAmount? book_amount = context.BookAmounts.Where(ba => ba.BookID == loan.BookID).FirstOrDefault();
-            if (book_amount == null) throw new Exception("Ошибка при получении числа книг!");
-            book_amount.Amount += 1;
+            context.Entry(loan).Reference("Book").Load();
+            loan.Book.Amount += 1;
             context.SaveChanges();
         }
 
 
         static public Loan? GetLoanByID(int id)
         {
-            Loan? loan = context.Loans.Where(l => l.ID == id).FirstOrDefault();
+            Loan? loan = context.Loans.Where(t => t.IsActive).Where(l => l.ID == id).FirstOrDefault();
             if (loan == null)
                 return null;
             context.Entry(loan).Reference("Book").Load();
@@ -271,7 +276,7 @@ namespace LibraryApp
 
         static public ICollection<Book>? GetBooksByAuthorId(int authorId)
         {
-            Author? author = context.Authors.Where(a => a.ID == authorId).Include(a => a.Books).FirstOrDefault();
+            Author? author = context.Authors.Where(t => t.IsActive).Where(a => a.ID == authorId).Include(a => a.Books).FirstOrDefault();
             if (author == null)
                 return null;
             return author.Books;
@@ -304,7 +309,7 @@ namespace LibraryApp
 
         static public void UpdateUser(int id, int newRoleId, string newLogin, string newPassword)
         {
-            context.Users.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t=>t.TypeId,newRoleId).SetProperty(t=> t.Login,newLogin).SetProperty(t=> t.Password, newPassword));
+            context.Users.Where(t => t.IsActive).Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t=>t.TypeId,newRoleId).SetProperty(t=> t.Login,newLogin).SetProperty(t=> t.Password, newPassword));
             var User = context.Users.Local.FirstOrDefault(t => t.ID == id);
             if (User != null)
             {
@@ -314,7 +319,7 @@ namespace LibraryApp
 
         static public void UpdateAuthor(int id, string newName)
         {
-            context.Authors.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName));
+            context.Authors.Where(t => t.IsActive).Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName));
             var Author = context.Authors.Local.FirstOrDefault(t => t.ID == id);
             if (Author != null)
             {
@@ -346,7 +351,7 @@ namespace LibraryApp
 
         static public void UpdateReader(int id, string newName, string newPhone)
         {
-            context.Readers.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName).SetProperty(t=>t.Phone, newPhone));
+            context.Readers.Where(t => t.IsActive).Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName).SetProperty(t=>t.Phone, newPhone));
             var Reader = context.Readers.Local.FirstOrDefault(t => t.ID == id);
             if (Reader != null)
             {
@@ -361,9 +366,9 @@ namespace LibraryApp
             context.SaveChanges();
         }
 
-        static public void UpdateLoan(int id, int readerId, int bookId, DateTime newBurrowTime, DateTime? newReturnTime)
+        static public void UpdateLoan(int id, int readerId, int bookId, DateTime newBurrowTime, DateTime? newReturnTime, int? user_id)
         {
-            context.Loans.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.ReaderID, readerId).SetProperty(t => t.BookID, bookId).SetProperty(t => t.BorrowDate, newBurrowTime).SetProperty(t=>t.ReturnDate,newReturnTime));
+            context.Loans.Where(t => t.IsActive).Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.ReaderID, readerId).SetProperty(t => t.BookID, bookId).SetProperty(t => t.BorrowDate, newBurrowTime).SetProperty(t=>t.ReturnDate,newReturnTime).SetProperty(t=>t.UserID,user_id));
             var loan = context.Loans.Local.FirstOrDefault(t => t.ID == id);
             if (loan != null)
             {
@@ -372,23 +377,18 @@ namespace LibraryApp
         }
 
 
-        static public void AddNewBook(Book book, int amount)
+        static public void AddNewBook(Book book)
         {
             context.Books.Add(book);
-            context.BookAmounts.Add(new BookAmount() { BookID = book.ID, Amount = amount, Book = book});
             context.SaveChanges();
         }
 
         static public void UpdateBook(int id, string newName, int newAuthorID, string newDescription, DateOnly newDate, int newPageCount, int newAmount)
         {
-            context.Books.Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName).SetProperty(t => t.Description, newDescription).SetProperty(t => t.AuthorID, newAuthorID).SetProperty(t => t.ReleaseDate, newDate).SetProperty(t=>t.PageCount,newPageCount));
-            context.BookAmounts.Where(t => t.BookID == id).ExecuteUpdate(s => s.SetProperty(t => t.Amount, newAmount));
+            context.Books.Where(t => t.IsActive).Where(t => t.ID == id).ExecuteUpdate(s => s.SetProperty(t => t.Name, newName).SetProperty(t => t.Description, newDescription).SetProperty(t => t.AuthorID, newAuthorID).SetProperty(t => t.ReleaseDate, newDate).SetProperty(t=>t.PageCount,newPageCount).SetProperty(t=>t.Amount,newAmount));
             var book = context.Books.Local.FirstOrDefault(t => t.ID == id);
-            var amount = context.BookAmounts.Local.FirstOrDefault(t => t.BookID == id);
             if (book != null)
                 context.Entry(book).Reload();
-            if (amount != null)
-                context.Entry(amount).Reload();
         }
     }
 }

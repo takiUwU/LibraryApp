@@ -90,11 +90,13 @@ namespace LibraryApp.win
                     SecondComboBox.Visibility = Visibility.Visible;
                     ThirdDatePicker.Visibility = Visibility.Visible;
                     FourthDatePicker.Visibility = Visibility.Visible;
+                    FifthTextBox.Visibility = Visibility.Visible;
 
                     FirstLabel.Content = "Читатель";
                     SecondLabel.Content = "Книга";
                     ThirdLabel.Content = "Дата Взятия";
                     FourthLabel.Content = "Дата Возрата";
+                    FifthLabel.Content = "Пользователь";
                     List<string> books = new List<string>();
                     List<string> readers = new List<string>();
                     books_id = new List<int>();
@@ -121,6 +123,7 @@ namespace LibraryApp.win
                         SecondComboBox.SelectedIndex = books.IndexOf(Convert.ToString(target!.Book));
                         ThirdDatePicker.Text = Convert.ToString(target!.BurrowTime);
                         FourthDatePicker.Text = Convert.ToString(target!.ReturnTime);
+                        FifthTextBox.Text = Convert.ToString(target.UserId);
                     }
 
                         break;
@@ -159,7 +162,7 @@ namespace LibraryApp.win
                     AdminPage.return_values!.AddRange(new List<dynamic> { FirstTextBox.Text, SecondTextBox.Text });
                     break;
                 case "loans":
-                    AdminPage.return_values!.AddRange(new List<dynamic> { readers_id![FirstComboBox.SelectedIndex], books_id![SecondComboBox.SelectedIndex], ThirdDatePicker.Text, FourthDatePicker.Text});
+                    AdminPage.return_values!.AddRange(new List<dynamic> { readers_id![FirstComboBox.SelectedIndex], books_id![SecondComboBox.SelectedIndex], ThirdDatePicker.Text, FourthDatePicker.Text, (string.IsNullOrEmpty(FifthTextBox.Text) ? "" : FifthTextBox.Text)!});
                     break;
                 case "users":
                     AdminPage.return_values!.AddRange(new List<dynamic> { FirstComboBox.Text, SecondTextBox.Text, ThirdTextBox.Text});
